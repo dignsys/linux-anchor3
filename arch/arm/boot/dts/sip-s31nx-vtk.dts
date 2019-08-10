@@ -1,0 +1,102 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (C) 2018  Nexell Co., Ltd.
+ * Author: Youngbok, Park <ybpark@nexell.co.kr>
+ */
+
+/dts-v1/;
+#include "nxp3220-vtk-common.dtsi"
+
+/ {
+	model = "Samsung SIP-S31NX SoC validation test board";
+	compatible = "samsung,sip-s31nx-vtk", "nexell,nxp3220";
+};
+
+&pinctrl_0 {
+	pmic_irq: sm5011-irq {
+		nexell,pins = "alive-1";
+		nexell,pin-function = <NX_PIN_FUNC0>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	cfg_wlanhostwake: cfg-wlanhostwake {
+		nexell,pins = "alive-3";
+		nexell,pin-function = <NX_PIN_FUNC0>;
+		nexell,pin-pull = <NX_PIN_PULL_UP>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+};
+
+&i2c_0 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	sm5011: sm5011-pmic@47 {
+		compatible = "sm,sm5011";
+		interrupt-parent = <&alive_0>;
+		interrupts = <1 IRQ_TYPE_NONE>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pmic_irq>;
+		reg = <0x47>;
+
+		voltage-regulators {
+			buck2_reg: BUCK2 {
+				regulator-name = "VDD_CPU_1P0";
+				regulator-min-microvolt = <562500>;
+				regulator-max-microvolt = <1400000>;
+				regulator-always-on;
+				regulator-boot-on;
+			};
+
+			buck3_reg: BUCK3 {
+				regulator-name = "VDD_DDRIO_1P5";
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <1500000>;
+				regulator-always-on;
+				regulator-boot-on;
+			};
+
+			buck4_reg: BUCK4 {
+				regulator-name = "VDD_DDR_1P0";
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <1000000>;
+				regulator-always-on;
+				regulator-boot-on;
+			};
+
+			buck5_reg: BUCK5 {
+				regulator-name = "VDD_CORE_1P0";
+				regulator-min-microvolt = <975000>;
+				regulator-max-microvolt = <1000000>;
+				regulator-always-on;
+				regulator-boot-on;
+			};
+
+			buck6_reg: BUCK6 {
+				regulator-name = "VDD_DDR_1P5";
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <1500000>;
+				regulator-always-on;
+				regulator-boot-on;
+			};
+
+			ldo9_reg: LDO9 {
+				regulator-name = "VDD_USB_1P0";
+				regulator-min-microvolt = <975000>;
+				regulator-max-microvolt = <1000000>;
+				regulator-always-on;
+				regulator-boot-on;
+			};
+
+			ldo14_reg: LDO14 {
+				regulator-name = "VDD_MM_1P0_AP";
+				regulator-min-microvolt = <975000>;
+				regulator-max-microvolt = <1000000>;
+				regulator-always-on;
+				regulator-boot-on;
+			};
+		};
+	};
+};

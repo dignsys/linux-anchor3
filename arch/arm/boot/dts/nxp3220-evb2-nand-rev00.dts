@@ -1,0 +1,47 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (C) 2018  Nexell Co., Ltd.
+ * Author: JungHyun, Kim <jhkim@nexell.co.kr>
+ */
+
+/dts-v1/;
+
+#include "nxp3220-evb2-common.dtsi"
+
+/ {
+	compatible = "nexell,nxp3220-evb2-nand", "nexell,nxp3220";
+};
+
+&dwmmc_0 {
+	status = "disabled";
+};
+
+&nand {
+	status = "okay";
+
+	nand-ecc-strength = <4>;
+	nand-ecc-step-size = <512>;
+	nand-timing-mode = <4>;
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		reserved@0 {
+			label = "reserved";
+			reg = <0x0000000 0x500000>;
+			read-only;
+		};
+
+		boot@600000 {
+			label = "boot";
+			reg = <0x0600000 0x1000000>;
+		};
+
+		rootfs@1600000 {
+			label = "rootfs";
+			reg = <0x1600000 0x6a00000>;
+		};
+	};
+};

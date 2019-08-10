@@ -1,0 +1,58 @@
+/* Enables RS485_1(/dev/ttyS1) interface for artik310s trike board. */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/clock/nxp3220-clk.h>
+
+/ {
+	compatible = "samsung,artik310s-trike";
+
+	/* Disable for GPIOE-0, GPIOE-1 */
+	fragment@0 {
+		target = <&m_can1>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	/* Reenable for RS485 */
+	fragment@1 {
+		target = <&uart1>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@2 {
+		target = <&soc>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			overlay_rs4851: serial1@20410000 {
+				compatible = "snps,dw-apb-uart";
+				reg = <0x20410000 0x1000>;
+				interrupts = <GIC_SPI 113 IRQ_TYPE_NONE>;
+				reg-shift = <2>;
+				reg-io-width = <4>;
+				clocks = <&cmu CLK_UART1_CORE>,
+					<&cmu CLK_UART1_APB>;
+				clock-names = "baudclk", "apb_pclk";
+				clock-frequency =  <100000000>;
+				linux,rs485-enabled-at-boot-time;
+				rs485-rts-active-low;
+				pinctrl-names = "default";
+				pinctrl-0 = <&uart1_bus &uart1_485>;
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@3 {
+		target-path = "/aliases";
+		__overlay__ {
+			serial1 = &overlay_rs4851;
+		};
+	};
+};

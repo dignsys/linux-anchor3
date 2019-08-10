@@ -1,0 +1,46 @@
+* Nexell Thermal Management Unit (TMU)
+
+Nexell Nxp3220 TMU is used same Samsung TMU.
+
+** Required properties:
+
+- compatible :Must be  "nexell,nxp3220-tmu"
+
+- interrupt-parent : The phandle for the interrupt controller
+- reg : Address range of the thermal registers. For soc's which has multiple
+	instances of TMU and some registers are shared across all TMU's like
+	interrupt related then 2 set of register has to supplied. First set
+	belongs	to register set of TMU instance and second set belongs to
+	registers shared with the TMU instance.
+
+- interrupts : Should contain interrupt for thermal system
+- clocks : The main clocks for TMU device
+	-- only use pclk clcok.
+- clock-names : Thermal system clock name
+	-- "tmu_apbif" operational clock for current TMU channel
+- vtmu-supply: This entry is optional and provides the regulator node supplying
+		voltage to TMU. If needed this entry can be placed inside
+		board/platform specific dts file.
+Following properties are mandatory (depending on SoC):
+- samsung,tmu_gain: Gain value for internal TMU operation.
+- samsung,tmu_reference_voltage: Value of TMU IP block's reference voltage
+- samsung,tmu_noise_cancel_mode: Mode for noise cancellation
+- samsung,tmu_efuse_value: Default level of temperature - it is needed when
+			   in factory fusing produced wrong value
+- samsung,tmu_min_efuse_value: Minimum temperature fused value
+- samsung,tmu_max_efuse_value: Maximum temperature fused value
+- samsung,tmu_first_point_trim: First point trimming value
+- samsung,tmu_second_point_trim: Second point trimming value
+- samsung,tmu_default_temp_offset: Default temperature offset
+- samsung,tmu_cal_type: Calibration type
+
+Example:
+
+	tmuctrl_0: tmuctrl@200e0000 {
+		compatible = "nexell,nxp3220-tmu";
+		reg = <0x200e0000 0x1000>;
+		interrupts = <GIC_SPI 110 IRQ_TYPE_NONE>;
+		clocks = <&cmu  CLK_TMU0_APB>;
+		clock-names = "tmu_apbif";
+		#include "nxp3220-tmu-sensor-conf.dtsi"
+	};

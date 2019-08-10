@@ -1,0 +1,326 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (C) 2018  Nexell Co., Ltd.
+ * Author: JungHyun, Kim <jhkim@nexell.co.kr>
+ */
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+#include "sip-s31nx-artik310s.dtsi"
+
+/ {
+	model = "Samsung artik310s trike board based on sip-s31nx";
+	compatible = "samsung,artik310s-trike", "samsung,artik310s",
+		   "nexell,nxp3220";
+
+	chosen {
+		stdout-path = &uart0;
+	};
+
+	gpio_keys {
+		compatible = "gpio-keys";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&key_pwr>;
+
+		power {
+			label = "Power";
+			gpios = <&alive_0 0 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_POWER>;
+			wakeup-source;
+		};
+	};
+
+	/* Null codec for PDM reference i2s */
+	snd_null_codec0: snd_null_codec@0 {
+		#sound-dai-cells = <0>;
+		compatible = "nexell,snd-null-codec";
+		status = "okay";
+	};
+
+	sound0: sound@0 {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "Artik310 Audio Card ALC5658";
+		simple-audio-card,widgets =
+			"Headphone", "Out Jack",
+			"Microphone", "In Jack";
+		simple-audio-card,routing =
+			"IN1P", "MICBIAS1",
+			"IN1P", "In Jack";
+		status = "okay";
+
+		simple-audio-card,dai-link@0 {
+			mclk-fs = <256>;
+			format = "i2s";
+			frame-master = <&sndcpu0>;
+			bitclock-master = <&sndcpu0>;
+
+			sndcpu0: cpu  {
+				sound-dai = <&i2s1 0>;
+			};
+
+			sndcodec0: codec {
+				sound-dai = <&alc5658 0>;
+			};
+		};
+	};
+
+	sound1: sound@1 {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "Artik310 PDM Card";
+		status = "okay";
+
+		simple-audio-card,dai-link@0 {
+			mclk-fs = <256>;
+			format = "i2s";
+			frame-master = <&sndcodec1>;
+			bitclock-master = <&sndcodec1>;
+
+			sndcpu1: cpu {
+				 sound-dai = <&i2s0 0>;
+			};
+
+			sndcodec1: codec {
+				sound-dai = <&snd_null_codec0>;
+			};
+		};
+	};
+
+	sound-pdm {
+		compatible = "nexell,nxp3220-pdm-card";
+		snd-controller = <&pdm>;
+	};
+
+};
+
+&adc {
+	status = "okay";
+};
+
+&dwc2otg {
+	status = "okay";
+};
+
+&dwmmc_2 {
+	cap-sd-highspeed;
+	cd-gpios = <&gpio_b 24 0>;
+	cd-inverted;
+	clock-frequency = <200000000>;
+	nexell,drive_shift = <0x01>;
+	nexell,sample_shift = <0x00>;
+	card-detect-delay = <200>;
+	disable-wp;
+	status = "okay";
+};
+
+&ehci {
+	status = "okay";
+};
+
+&gmac0 {
+	status = "okay";
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&gmac0_pins>;
+	phy-mode = "rgmii";
+	phy-handle = <&ethphy0>;
+
+	phy-reset-gpios = <&gpio_d 9 GPIO_ACTIVE_LOW>;
+	phy-intr-gpios = <&alive_0 5 GPIO_ACTIVE_LOW>;
+	phy-pme-gpios = <&alive_0 2 GPIO_ACTIVE_LOW>;
+
+	mdio@3 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		ethphy0: ethernet-phy@3 {
+			reg = <3>;
+		};
+	};
+};
+
+&gmac0_phyint {
+	nexell,pins = "alive-5";
+};
+
+&gmac0_pme {
+	nexell,pins = "alive-2";
+};
+
+&gmac1 {
+	status = "okay";
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&gmac1_pins>;
+	phy-mode = "rmii";
+	phy-handle = <&ethphy1>;
+	phy-reset-gpios = <&gpio_b 31 GPIO_ACTIVE_LOW>;
+	phy-intr-gpios = <&alive_0 7 GPIO_ACTIVE_LOW>;
+	phy-pme-gpios = <&alive_0 6 GPIO_ACTIVE_LOW>;
+
+	mdio@1 {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		ethphy1: ethernet-phy@1 {
+			reg = <1>;
+		};
+	};
+};
+
+&i2c_1 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	alc5658: alc5658@1a {
+		#sound-dai-cells = <1>;
+		compatible = "realtek,rt5659";
+		reg = <0x1a>;
+		realtek,dmic1-data-pin = <2>;
+	};
+};
+
+&i2c_2 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+};
+
+&i2c_3 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+};
+
+&i2c_4 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+};
+
+&m_can0 {
+	status = "okay";
+};
+
+&m_can1 {
+	status = "okay";
+};
+
+&mmc2_clk {
+	nexell,pin-strength = <NX_PIN_STR1>;
+};
+
+&ohci {
+	status = "okay";
+};
+
+&pdm {
+	ref-iis = <0>;
+	sample-rate = <16000>;
+	status = "okay";
+};
+
+&pinctrl_0 {
+	tsp_int: tsp-int {
+		nexell,pins = "alive-6";
+		nexell,pin-function = <NX_PIN_FUNC0>;
+		nexell,pin-pull = <NX_PIN_PULL_UP>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	tsp_reset: tsp-reset {
+		nexell,pins = "gpioa-19";
+		nexell,pin-function = <NX_PIN_FUNC0>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	gmac0_pins: gmac0_pins {
+		gmac0_txclk: gmac-txclk {
+			nexell,pin-strength = <NX_PIN_STR2>;
+		};
+	};
+};
+
+&pwm {
+	status = "okay";
+	nexell,pwm-outputs = <0>, <1>, <2>, <3>;
+};
+
+&rtc {
+	status = "okay";
+};
+
+&spi_1 {
+	status = "okay";
+	cs-gpios = <&gpio_a 9 0>;
+
+	spidev@0 {
+		compatible = "linux,spidev";
+		reg = <0>;
+		spi-max-frequency = <20000000>;
+	};
+};
+
+&spi_2 {
+	status = "okay";
+	cs-gpios = <&gpio_a 13 0>;
+
+	spidev@0 {
+		compatible = "linux,spidev";
+		reg = <0>;
+		spi-max-frequency = <20000000>;
+	};
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&uart1 {
+	status = "okay";
+};
+
+&uart3 {
+	status = "okay";
+};
+
+&uart4 {
+	status = "okay";
+	pinctrl-0 = <&uart4_bus &uart4_485>;
+	linux,rs485-enabled-at-boot-time;
+	rs485-rts-active-low;
+};
+
+&uart5 {
+	status = "okay";
+	pinctrl-0 = <&uart5_bus &uart5_485>;
+	linux,rs485-enabled-at-boot-time;
+	rs485-rts-active-low;
+};
+
+&usb2phy {
+	status = "okay";
+	otg,vbus-gpio = <&gpio_c 12 0>;
+	otg,vbus-tune = <1>;
+	ehci,vbus-gpio = <&gpio_b 23 0>;
+};
+
+&i2s0_bus {
+	nexell,pins = "gpioa-22", "gpioa-23";
+	nexell,pin-pull = <NX_PIN_PULL_UP>;
+};
+
+&i2s0 {
+	frame-bit = <32>;
+	sample-rate = <48000>;
+	status = "okay";
+};
+
+&i2s1 {
+	frame-bit = <32>;
+	sample-rate = <48000>;
+	status = "okay";
+};

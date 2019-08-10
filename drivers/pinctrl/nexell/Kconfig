@@ -1,0 +1,15 @@
+#
+# NEXELL Pin control drivers
+#
+config PINCTRL_NEXELL
+	bool
+	select PINMUX
+	select PINCONF
+
+config PINCTRL_NEXELL_NXP3220
+	bool "Nexell nxp3220 SoC pinctrl driver"
+	depends on ARCH_NEXELL
+	select PINCTRL_NEXELL
+	help
+	  This pinctrl driver provides an interface that allows configuring
+	  of NEXELL nxp3220 pins and using them as GPIOs.

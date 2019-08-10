@@ -1,0 +1,41 @@
+Nexell I2S controller
+
+Required Properties:
+
+- compatible : should be one of the following.
+   - nexell,nxp3220-i2s: for 8/16/24bit stereo I2S.
+- reg: physical base address of the controller and length of memory mapped
+  region.
+- dmas: list of DMA controller phandle and DMA request line ordered pairs.
+- dma-names: identifier string for each DMA request line in the dmas property.
+  These strings correspond 1:1 with the ordered pairs in dmas.
+- clocks: Must contain an entry for each entry in clock-names.
+- clock-names: Must include the following entries:
+ - i2s : i2s core clock name for mclk
+ - pclk : i2s internal clock controller
+ - pll : i2s core clock's source clock for dynamic sample rate for s5pxx18 soc.
+	 It is not used in nxp3220.
+
+Optional Properties:
+- pinctrl-0: Should specify pin control groups used for this controller.
+- pinctrl-names: Should contain only one value - "default".
+- frame-bit : Set frame bit. (16/24/32/48 fs)
+- sample-rate : Set sample rate. (8000~192000hz),
+		if set this can't dynamic sample rates
+- external-mclk-frequency : set external mclk frequency to use in master mode
+- supply-mclk-always : supply mclk ouput always (not disable mclk output).
+- supply-lrck-always : supply lrck ouput always (not disable lrck output).
+
+Example:
+
+i2s0: i2s0@20078000 {
+	compatible = "nexell,nxp3220-i2s";
+	reg = <0x20780000 0x1000>;
+	clocks = <&cmu CLK_I2S0_CORE>, <&cmu CLK_I2S0_APB>;
+	clock-names = "i2s", "pclk";
+	dmas = <&pdma0 5 &pdma0 4>;
+	dma-names = "tx", "rx";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2s0_bus>;
+	status = "disabled";
+};

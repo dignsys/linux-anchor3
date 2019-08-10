@@ -1,0 +1,55 @@
+Device-Tree bindings for Nexell's VPU driver
+
+Required properties:
+- compatible: value should be "nexell, nx-vpu"
+- reg: Physical base address of the IP registers and length of memory mapped
+       region.
+- interrupts: The interrupt signals from the vpu.
+- clocks: Must contain an entry for each entry in clock-names.
+- clock-names: Must include the following entries.
+
+Optional properties:
+- memory-region: from reserved memory binding: require one memory region.
+  If the property is present, the kernel must be set reserved-memory in dts.
+  and must be seletcted VIDEO_NEXELL_RESERVED_MEMORY in kernel configuration.
+  If the property is not present, the kernel must be not selected
+  VIDEO_NEXELL_RESERVED_MEMORY in kernel configuration.
+  ( recommand to use memory-region )
+
+Example:
+vpu: vpu@25180000 {
+	compatible = "nexell,nx-vpu";
+	reg = <0x25180000 0x10000>;
+	interrupts = <GIC_SPI 31 IRQ_TYPE_NONE>;
+	clocks = <&cmu_mm CLK_MM_CODA960_AXI>,
+		<&cmu_mm CLK_MM_CODA960_APB>,
+		<&cmu_mm CLK_MM_CODA960_CORE>;
+	clock-names = "vpu-clk-axi", "vpu-clk-apb", "vpu-clk-core";
+	assigned-clocks = <&cmu_mm CLK_MM_CODA960_CORE>;
+	assigned-clock-rates = <250000000>;
+	status = "disabled";
+};
+
+- in the case of using reserved-memory
+reserved-memory {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	ranges;
+
+	vpu_cma: region_vpu_cma {
+		compatible = "shared-dma-pool";
+		reusable;
+		size = <0x8000000>;
+		/* linux,cma-default; */
+	};
+};
+
+&vpu {
+	memory-region = <&vpu_cma>;
+	status = "okay";
+};
+
+- in the case of unusing reserved-memory
+&vpu {
+	status = "okay";
+};

@@ -1,0 +1,139 @@
+Binding for Nexell nxp3220 pin cotroller
+========================================
+
+Nexell's ARM bases SoC's integrates a GPIO and Pin mux/config hardware
+controller. It controls the input/output settings on the available pads/pins
+and also provides ability to multiplex and configure the output of various
+on-chip controllers onto these pads.
+
+Please refer to pinctrl-bindings.txt in this directory for details of the
+common pinctrl bindings used by client devices, including the meaning of the
+phrase "pin configuration node".
+
+
+Required properties:
+  - compatible: may be "nexell,nxp3220-pinctrl"
+  - reg: should be register base and length as documented in the datasheet
+  - interrupts: interrupt specifier for the controller over gpio and alive pins
+
+Example:
+pinctrl_0: pinctrl {
+	compatible = "nexell,nxp3220-pinctrl";
+	#address-cells = <1>;
+	#size-cells = <1>;
+	reg = <PHYS_BASE_GPIOA 0x1000
+	       PHYS_BASE_GPIOB 0x1000
+	       PHYS_BASE_GPIOC 0x1000
+	       PHYS_BASE_GPIOD 0x1000
+	       PHYS_BASE_GPIOE 0x1000
+	       PHYS_BASE_ALIVE 0x800>;
+	interrupts = <0 IRQ_GPIOA 0>,
+		     <0 IRQ_GPIOB 0>,
+		     <0 IRQ_GPIOC 0>,
+		     <0 IRQ_GPIOD 0>,
+		     <0 IRQ_GPIOE 0>,
+		     <0 IRQ_ALIVE 0>;
+};
+
+  Note: Setting up the order must always match.
+
+
+Nexell's pin configuration nodes act as a container for an arbitrary number of
+subnodes. Each of these subnodes represents some desired configuration for a
+pin, a group, or a list of pins or groups. This configuration can include the
+mux function to select on those pin(s)/group(s), and various pin configuration
+parameters.
+
+  Child nodes must be set at least one of the following settings:
+  - nexell,pins = Select pins for using this function.
+  - nexell,pin-function = Select the function for use in a selected pin.
+  - nexell,pin-pull = Pull up/down configuration.
+  - nexell,pin-strength = Drive strength configuration.
+
+  Child nodes must be set for the powerdown retention:
+  - nexell,pin-pwr-domain = Select powerdown retention pin's power domain.
+  - nexell,pin-pwr-drv = Select the powerdown retention direction.
+  - nexell,pin-pwr-val = Set powerdown retention output value.
+  - nexell,pin-pwr-pull = Set powerdown retention pull up/down configuration.
+
+  Valid values for nexell,pins are:
+     "gpioX-N"		: X in {A,B,C,D,E}, N in {0-31}
+  Valid values for nexell,pin-function are:
+     "NX_PIN_FUNC0", "NX_PIN_FUNC1", "NX_PIN_FUNC2", "NX_PIN_FUNC3"
+                 This setting means that the value is different for each pin.
+                 Please refer to datasheet.
+  Valid values for nexell,pin-pull are:
+     "NX_PIN_PULL_DOWN", "NX_PIN_PULL_UP", "NX_PIN_PULL_NONE"
+  Valid values for nexell,pin-strength are:
+     "NX_PIN_STR0", "NX_PIN_STR1", "NX_PIN_STR2", "NX_PIN_STR3"
+
+  Valid values for nexell,pin-pwr-domain are:
+     - for the nxp3220
+     "NX_PIN_PWR_DOMAIN_PERI0" : power domain 'peri0'
+     "NX_PIN_PWR_DOMAIN_SDMMC" : power domain 'sdmmc'
+     "NX_PIN_PWR_DOMAIN_NAND" : power domain 'nand'
+     "NX_PIN_PWR_DOMAIN_PERI1" : power domain 'peri1'
+     "NX_PIN_PWR_DOMAIN_GMAC" : power domain 'gmac'
+     "NX_PIN_PWR_DOMAIN_PERI2" : power domain 'peri2'
+     "NX_PIN_PWR_DOMAIN_VIP" : power domain 'vip'
+  Valid values for nexell,pin-pwr-drv are:
+     "NX_PIN_PWR_NONE" : No powerdown retention
+     "NX_PIN_PWR_INPUT": Set input powerdown retention
+     "NX_PIN_PWR_OUTPUT" : Set output powerdown retention
+     "NX_PIN_PWR_PREV" : Set output powerdown retention with previous state
+  Valid values for nexell,pin-pwr-val are:
+     "NX_PIN_PWR_RETEN_LOW" : Set output powerdown retention with low
+     "NX_PIN_PWR_RETEN_HIGH" : Set output powerdown retention with high
+  Valid values for nexell,pin-pwr-pull are:
+     "NX_PIN_PWR_PULL_DOWN" : Set pull down powerdown retention
+     "NX_PIN_PWR_PULL_UP": Set pull up powerdown retention
+     "NX_PIN_PWR_PULL_NONE": Set pull off powerdown retention
+     "NX_PIN_PWR_PULL_PREV": Keep previous pull state powerdown retention
+
+Example:
+  - pin settings
+	gmac_txd: gmac-txd {
+		nexell,pins = "gpioc-18", "gpioc-19", "gpioc-20", "gpioc-21";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR3>;
+	};
+
+	gmac_rxd: gmac-rxd {
+		nexell,pins = "gpioc-24", "gpioc-25", "gpioc-26", "gpioc-27";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR3>;
+	};
+
+	gmac_txen: gmac-txen {
+		nexell,pins = "gpioc-22";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR3>;
+	};
+
+  - pin settings for the powerdown retention
+	sdmmc_pwr_pin: sdmmc-pwr-pin {
+		nexell,pin-pwr-domain = <NX_PIN_PWR_DOMAIN_SDMMC>;
+		nexell,pins = "gpioa-29", "gpioa-30", "gpioa-31", "gpiob-0",
+			      "gpiob-1", "gpiob-2", "gpiob-3", "gpiob-4",
+			      "gpiob-5", "gpiob-6", "gpiob-7", "gpiob-8";
+		nexell,pin-pwr-drv = <NX_PIN_PWR_NONE>, ....;
+		nexell,pin-pwr-val = <NX_PIN_PWR_RETEN_LOW>, ...;
+	};
+
+  - used by client devices
+	gmac0:ethernet@... {
+		pinctrl-names = "default";
+		pinctrl-0 = <&gmac_txd &gmac_rxd &gmac_txen &gmac_mdc
+		             &gmac_mdio &gmac_rxclk &gmac_txclk>;
+		...
+	};
+
+  - used by client devices for the powerdown retention
+	&sdmmc_pwr_pin {
+		nexell,pin-pwr-drv = <NX_PIN_PWR_NONE>, <NX_PIN_PWR_OUTPUT>;
+		nexell,pin-pwr-val = <NX_PIN_PWR_RETEN_LOW>,
+				<NX_PIN_PWR_RETEN_HIGH>;
+	};

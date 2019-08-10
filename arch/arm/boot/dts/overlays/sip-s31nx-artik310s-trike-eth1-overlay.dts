@@ -1,0 +1,65 @@
+/* Reenable eth1 interface for artik310s explorer board. */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/clock/nxp3220-clk.h>
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+	compatible = "samsung,artik310s-trike";
+
+	/* Reenable for phy-reset-gpios */
+	fragment@0 {
+		target = <&gmac1>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@1 {
+		target = <&soc>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			gmac1_overlay: ethernet_overlay@126110000 {
+				compatible = "nexell,nxp3220-dwmac";
+				reg = <0x26110000 0x8000>;
+				interrupts = <GIC_SPI 42 IRQ_TYPE_NONE>;
+				interrupt-names = "macirq1";
+				clocks = <&cmu CLK_GMAC_RMII0_AXI>,
+					 <&cmu CLK_GMAC_RMII0_APB>,
+					 <&cmu CLK_GMAC_RMII0_PTP_REF>;
+				clock-names = "master_bus", "slave_bus", "ptp_ref";
+				snps,write-requests = <3>;
+				snps,read-requests = <3>;
+				snps,burst-map = <0x4>;
+				snps,txpbl = <32>;
+				snps,rxpbl = <32>;
+				snps,no-pbl-x8;
+				bus-id = <1>;
+				assigned-clocks = <&cmu CLK_GMAC_RMII0_AXI>,
+					  <&cmu CLK_GMAC_RMII0_APB>,
+					  <&cmu CLK_GMAC_RMII0_PTP_REF>;
+				assigned-clock-rates = <250000000>, <125000000>, <25000000>;
+				phy-mode = "rmii";
+				phy-handle = <&ethphy>;
+				phy-reset-gpios = <&gpio_a 19 GPIO_ACTIVE_LOW>;
+				phy-intr-gpios = <&alive_0 7 GPIO_ACTIVE_LOW>;
+				phy-pme-gpios = <&alive_0 6 GPIO_ACTIVE_LOW>;
+				pinctrl-names = "default";
+				pinctrl-0 = <&gmac1_pins>;
+				status = "okay";
+				 mdio@1 {
+					#address-cells = <1>;
+					#size-cells = <0>;
+
+					ethphy: ethernet-phy@1 {
+						reg = <1>;
+					};
+				};
+			};
+		};
+	};
+};

@@ -1,0 +1,35 @@
+/* Enables spidev interface for artik310s explorer board. */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/nxp3220-clk.h>
+
+/ {
+	compatible = "samsung,artik310s-explorer";
+
+	fragment@0 {
+		target = <&pwm>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@1 {
+		target = <&spi_0>;
+		__overlay__ {
+			status = "okay";
+			assigned-clocks = <&cmu CLK_SPI0_APB>, <&cmu CLK_SPI0_CORE>;
+			assigned-clock-rates = <200000000>, <200000000>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			cs-gpios = <&gpio_c 4 0>;
+
+			spidev@0 {
+				compatible = "linux,spidev";
+				reg = <0>;
+				spi-max-frequency = <20000000>;
+			};
+		};
+	};
+};

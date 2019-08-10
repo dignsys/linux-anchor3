@@ -1,0 +1,46 @@
+/* Enables uart(/dev/ttyS5) interface for artik310s trike board. */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/clock/nxp3220-clk.h>
+
+/ {
+	compatible = "samsung,artik310s-trike";
+	fragment@0 {
+		target = <&uart5>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@1 {
+		target = <&soc>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			overlay_uart5: serial5@20450000 {
+				compatible = "snps,dw-apb-uart";
+				reg = <0x20450000 0x1000>;
+				interrupts = <GIC_SPI 117 IRQ_TYPE_NONE>;
+				reg-shift = <2>;
+				reg-io-width = <4>;
+				clocks = <&cmu CLK_UART5_CORE>,
+					<&cmu CLK_UART5_APB>;
+				clock-names = "baudclk", "apb_pclk";
+				clock-frequency =  <100000000>;
+				pinctrl-names = "default";
+				pinctrl-0 = <&uart5_bus>;
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@2 {
+		target-path = "/aliases";
+		__overlay__ {
+			serial5 = &overlay_uart5;
+		};
+	};
+};

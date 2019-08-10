@@ -1,0 +1,17 @@
+Nexell V4L2 Device Tree bindings
+================================
+
+Decimator can scale down input image and saves to memory.
+Normally this function is same to pip-preview function.
+
+Required properties:
+- compatible	: must contain "nexell,nx3220-decimator"
+- module	: vip module number
+- status	: to enable, must contain "okay"
+
+Example:
+	decimator {
+		compatible = "nexell,nx3220-decimator";
+		module = <0>;
+		status = "okay";
+	};

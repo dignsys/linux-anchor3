@@ -1,0 +1,7 @@
+Newhaven Display International 5" 800 x 480 TFT LCD panel
+
+Required properties:
+- compatible: should be "newhaven,nhd-5.0-800480tf-atxl"
+
+This binding is compatible with the simple-panel binding, which is specified
+in simple-panel.txt in this directory.

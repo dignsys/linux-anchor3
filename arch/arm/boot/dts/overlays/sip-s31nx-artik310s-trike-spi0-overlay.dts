@@ -1,0 +1,45 @@
+/* Enables spidev(/dev/spidev0.0) interface for artik310s trike board. */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/clock/nxp3220-clk.h>
+
+/ {
+	compatible = "samsung,artik310s-trike";
+
+	/* Disable for GPIOB-31 */
+	fragment@0 {
+		target = <&gmac1>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	/* Disable for GPIOC-4 */
+	fragment@1 {
+		target = <&pwm>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@2 {
+		target = <&spi_0>;
+		__overlay__ {
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <0>;
+			assigned-clocks = <&cmu CLK_SPI0_APB>, <&cmu CLK_SPI0_CORE>;
+			assigned-clock-rates = <200000000>, <200000000>;
+			cs-gpios = <&gpio_c 4 0>;
+
+			spidev@0 {
+				compatible = "linux,spidev";
+				reg = <0>;
+				spi-max-frequency = <20000000>;
+			};
+		};
+	};
+};

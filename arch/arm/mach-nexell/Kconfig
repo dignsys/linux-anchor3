@@ -1,0 +1,220 @@
+menuconfig ARCH_NEXELL
+	bool "Nexell SoCs"
+	select ARM_AMBA
+	select HAVE_SMP
+	select ARCH_HAS_CPUFREQ
+	select GENERIC_TIME
+	select GENERIC_CLOCKEVENTS
+	select ZONE_DMA
+	select SPARSE_IRQ
+	select COMMON_CLK
+	select PINCTRL
+	select ARCH_REQUIRE_GPIOLIB
+	select ARM_PATCH_PHYS_VIRT
+	select USE_OF
+	select VIRT_TO_BUS
+	select HAVE_S3C2410_I2C if I2C
+	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+
+if ARCH_NEXELL
+
+config ARCH_NXP3220_COMMON
+	bool
+	select CPU_V7
+	select ARM_GIC
+	select HAVE_ARM_ARCH_TIMER
+
+config ARCH_NXP3220
+	bool "NXP3220"
+	select ARCH_NXP3220_COMMON
+	help
+	   Nexell NXP3220 (ARM Cortex A7) SoC based systems
+
+config ARCH_NXP3225
+	bool "NXP3225"
+	select ARCH_NXP3220_COMMON
+	help
+	  Nexell NXP3225 (ARM Cortex A7) based on NXP3220
+
+endif
+
+config SMP_IRQ_AFFINITY
+	bool "SMP IRQ AFFINITY"
+	depends on ARCH_NXP3220_COMMON
+	help
+	  This enbalse support allows multi-core to handle irq.
+
+config QUICKBOOT_QUIET
+	bool "quickboot quiet booting"
+	default n
+	help
+	  This enables quiet booting for nexell quickboot.
+
+config LATE_INIT_TO_DEFER
+	bool
+
+config QUICKBOOT_DEFERRED_INIT
+	bool "deferred initcall for quickboot"
+	depends on ARCH_NEXELL
+	default n
+	select LATE_INIT_TO_DEFER
+	help
+	  This option delays some initcall to support quickboot.
+
+config DEFERRED_LEVEL
+	int "level of deferred initcalls (1-2)"
+	depends on LATE_INIT_TO_DEFER
+	range 1 2
+	default 1
+
+menu "Deferred initcall features"
+	depends on QUICKBOOT_DEFERRED_INIT
+
+config DEFERRED_CRYPTO
+	bool "deferred initcall crypto"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_BLOCK_LOOP
+	bool "deferred initcall block loop"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_BLUETOOTH
+	bool "deferred initcall bluetooth"
+	default y
+	help
+	  This change subsys initcall to deferred initcall .
+
+config DEFERRED_ADC
+	bool "deferred initcall adc"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_KEYPAD
+	bool "deferred initcall keypad"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_BUFIO
+	bool "deferred initcall buffered IO"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_NXE2000
+	bool "deferred initcall NXE2000"
+	default y
+
+config DEFERRED_DWC_ETHERNET
+	bool "deferred initcall dwc ethernet"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_TMU
+	bool "deferred initcall TMU"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_DWC_PLAT
+	bool "deferred initcall dwc platform"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_EHCI_PLAT
+	bool "deferred initcall ehci platform"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_OHCI_PLAT
+	bool "deferred initcall ohci platform"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_SLAB_SYSFS
+	bool "deferred initcall slab sysfs"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_IPV6
+	bool "deferred initcall ipv6"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_SOUND_I2S
+	bool "deferred initcall SOUND I2S"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_SOUND_PDM
+	bool "deferred initcall SOUND PDM"
+	default y
+	depends on DEFERRED_LEVEL=1
+
+config DEFERRED_PARAM_SYSFS
+	bool "deferred initcall param sysfs"
+	default y
+
+config DEFERRED_WIRELESS
+	bool "deferred initcall wireless"
+	default y
+
+config DEFERRED_UP_BLOCK
+	bool "deferred initcall level up BLOCK"
+	default y
+	depends on DEFERRED_LEVEL=2
+
+config DEFERRED_UP_CRC32
+	bool "deferred initcall level up crc32"
+	default y
+	depends on DEFERRED_LEVEL=2
+
+config DEFERRED_UP_DMA
+	bool "deferred initcall level up DMA"
+	default y
+	depends on DEFERRED_LEVEL=2
+
+config DEFERRED_UP_DRM
+	bool "deferred initcall level up DRM"
+	default y
+	depends on DEFERRED_LEVEL=2
+
+config DEFERRED_UP_MMC
+	bool "deferred initcall level up MMC"
+	default y
+
+config DEFERRED_UP_PWM
+	bool "initcall initcall level up PWM"
+	default y
+	depends on DEFERRED_LEVEL=2
+
+config DEFERRED_UP_SERIAL
+	bool "initcall initcall level up serial"
+	default y
+	depends on DEFERRED_LEVEL=2
+
+config DEFERRED_UP_BL
+	bool "initcall initcall level up backlight"
+	default y
+	depends on DEFERRED_LEVEL=2
+
+config DEFERRED_UP_FS
+	bool "initcall initcall level up FileSystem"
+	default y
+	depends on DEFERRED_LEVEL=2
+
+config DEFERRED_UP_ADC
+	bool "initcall initcall level up ADC"
+	default y
+	depends on DEFERRED_LEVEL=2
+
+config DEFERRED_UP_VIP
+	bool "initcall initcall level up VIP"
+	default y
+	depends on DEFERRED_LEVEL=2
+
+config DEFERRED_UP_DEINTERLACER
+	bool "initcall initcall level up Deinterlacer"
+	default y
+	depends on DEFERRED_LEVEL=2
+
+endmenu

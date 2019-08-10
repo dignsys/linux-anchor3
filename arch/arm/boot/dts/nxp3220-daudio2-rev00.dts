@@ -1,0 +1,64 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (C) 2018  Nexell Co., Ltd.
+ * Author: JungHyun, Kim <jhkim@nexell.co.kr>
+ */
+
+/dts-v1/;
+
+#include "nxp3220-evb2-common.dtsi"
+
+/ {
+	compatible = "nexell,nxp3220-daudio2", "nexell,nxp3220";
+        aliases {
+                i2c1 = &i2c_audio_ipod;
+        };
+};
+
+
+&dwmmc_0 {
+	status = "okay";
+};
+
+&dwmmc_1 {
+	deferred-probe;
+	status = "disabled";
+};
+
+&dwmmc_2 {
+	deferred-probe;
+	status = "okay";
+};
+
+&gmac0 {
+	status = "disabled";
+};
+
+&gpio_keys {
+	pinctrl-names = "default";
+	pinctrl-0 = <&button_pwr>;
+
+	button@pwr {
+		label = "power";
+		gpios = <&alive_0 0 GPIO_ACTIVE_LOW>;
+		linux,code = <KEY_POWER>;
+		gpio-key,wakeup;
+	};
+};
+
+&m_can0 {
+	status = "disabled";
+};
+
+&m_can1 {
+	status = "disabled";
+};
+
+&spi_0 {
+	status = "disabled";
+};
+
+&uart5 {
+	status = "disabled";
+};
+

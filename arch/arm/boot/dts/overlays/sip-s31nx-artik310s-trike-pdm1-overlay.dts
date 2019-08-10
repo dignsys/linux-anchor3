@@ -1,0 +1,19 @@
+/* Change snd-controller in sound-pdm to enable PDM 2/3 interface */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "samsung,artik310s-trike";
+
+	fragment@0 {
+		target-path = "/";
+		__overlay__ {
+			sound-pdm {
+				snd-controller = <&overlay_pdm>;
+				status = "okay";
+			};
+		};
+	};
+};
+

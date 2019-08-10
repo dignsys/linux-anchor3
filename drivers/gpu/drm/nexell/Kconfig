@@ -1,0 +1,75 @@
+config DRM_NEXELL
+	tristate "DRM Support for NEXELL Display Controller"
+	depends on DRM && (ARCH_NXP3220 || ARCH_NXP3225)
+	select DRM_KMS_HELPER
+	select DRM_KMS_FB_HELPER
+	select DRM_GEM_CMA_HELPER
+	select VIDEOMODE_HELPERS
+	select FB_SYS_FILLRECT
+	select FB_SYS_COPYAREA
+	select FB_SYS_IMAGEBLIT
+	select VT_HW_CONSOLE_BINDING if FRAMEBUFFER_CONSOLE
+	select DRM_NEXELL_GEM
+	help
+	  Choose this option if you have a Nexell soc chipset.
+	  This driver provides kernel mode setting and buffer
+	  management to userspace. If M is selected the module
+	  will be called nexell drm.
+
+config DRM_CHECK_AUTHENTICATION
+        bool "Check Authentication for modesetting driver"
+        depends on DRM_NEXELL
+        default y
+        help
+         Choose this option if you need check authentication
+         for modesetting driver
+
+          If in doubt, say "Y".
+
+config DRM_NEXELL_GEM
+	bool
+
+config DRM_NEXELL_GEM_SYSTEM
+        bool "Nexell gem supports system memory allocation"
+        depends on DRM_NEXELL
+        default n
+        help
+	 Choose this if you need the NEXELL GEM SYSTEM.
+	 NEXELL GEM allocates buffer in CMA or system memory for non-contiguous,
+	 cached memory. If this option is not selected, drm allocates buffer
+	 in CMA memory.
+
+config DRM_PRE_INIT_DRM
+        bool "Don't reinitialize, use bootloader's Display configuration"
+        depends on DRM_NEXELL
+        default n
+        help
+	 Select this option if display contents should be inherited as set by
+	 the bootloader.
+
+config DRM_NEXELL_G2D
+        bool "Graphic 2D Accelator"
+        depends on DRM_NEXELL && ARCH_NXP3220_COMMON
+        default y
+        help
+	 Choose this option if you want to use NXP3220 Graphic 2D Accelator(G2D)
+         for DRM.
+
+config DRM_NEXELL_RGB
+	bool "RGB LCD support"
+	depends on DRM_NEXELL
+	select DRM_PANEL
+	help
+	 This selects support for RGB LCD display out.
+	 If you want to enable RGB LCD display,
+	 you should selet this option.
+
+config DRM_NEXELL_LVDS
+	bool "LVDS LCD support"
+	depends on DRM_NEXELL
+	select DRM_PANEL
+	help
+	 This selects support for LVDS LCD display out.
+	 If you want to enable LVDS LCD display,
+	 you should selet this option.
+

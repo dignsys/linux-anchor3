@@ -1,0 +1,39 @@
+/* Enables OTG interface for artik310s trike board. */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/clock/nxp3220-clk.h>
+
+/ {
+	compatible = "samsung,artik310s-trike";
+
+	fragment@0 {
+		target = <&usb2phy>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@1 {
+		target = <&soc>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			overlay_usb2phy: usb2phy_@24030000 {
+				compatible = "nexell,nxp3220-usb2-phy";
+				reg = <0x24030000 0x200>;
+				#phy-cells = <1>;
+				assigned-clocks = <&cmu_usb CLK_USB_AHB>;
+				assigned-clock-rates = <250000000>;
+				clocks = <&cmu_usb CLK_USB_SYSREG_APB>;
+				clock-names = "apb";
+				otg,vbus-gpio = <&gpio_c 11 0>;
+				otg,vbus-tune = <1>;
+				ehci,vbus-gpio = <&gpio_b 23 0>;
+				status = "okay";
+			};
+		};
+	};
+};

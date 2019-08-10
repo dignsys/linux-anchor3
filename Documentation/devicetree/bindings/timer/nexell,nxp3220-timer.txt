@@ -1,0 +1,53 @@
+Nexell NXP3220 Timer Controller
+
+Required properties:
+- compatible : should be "nexell,nxp3220-timer"
+- reg : Specifies base physical address and size of the registers.
+- interrupts : The interrupt of the first timer
+- clocks: phandle to the source clock
+- clock-names : clock names
+- clksource : timer channel to use source clock.
+- clkevent'N' : timer channel to use event clock.
+- clksrc-frequency : clock-source timer frequency
+- clkevt-frequencies : clock-event timer frequencies
+
+Example:
+	pwm-timer@208c0000 {
+		compatible = "nexell,nxp3220-timer";
+		reg = <0x208c0000 0x1000>;
+		clocks =  <&cmu CLK_TIMER0_APB>,
+			  <&cmu CLK_TIMER0_TCLK0>,
+			  <&cmu CLK_TIMER0_TCLK1>,
+			  <&cmu CLK_TIMER0_TCLK2>;
+		clock-names = "apb", "clksrc", "clkevt0", "clkevt1";
+		clksrc-frequency = <100000000>;
+		clkevt-frequencies = <100000000>, <100000000>;
+		interrupts = <GIC_SPI 107 IRQ_TYPE_NONE>,
+			     <GIC_SPI 108 IRQ_TYPE_NONE>;
+		clksource = <0>;
+		clkevent0 = <1>;
+		clkevent1 = <2>;
+	};
+
+	cmu {
+		...
+		assigned-clocks = ...
+			  <&cmu CLK_SRC_TIMER0_APB>,
+			  <&cmu CLK_SRC_TIMER0_TCLK0>,
+			  <&cmu CLK_SRC_TIMER0_TCLK1>,
+			  <&cmu CLK_SRC_TIMER0_TCLK2>,
+		...
+		assigned-clock-parents = ...
+			 <&pll_0 0>,	/* SRC_TIMER0_APB */
+			 <&pll_0 0>,	/* SRC_TIMER0_TCLK0 */
+			 <&pll_0 0>,	/* SRC_TIMER0_TCLK1 */
+			 <&pll_0 0>,	/* SRC_TIMER0_TCLK2 */
+		...
+		assigned-clock-rates = ...
+		       <100000000>,     /* SRC_TIMER0_APB */
+		       <0>,             /* SRC_TIMER0_TCLK0 */
+		       <0>,             /* SRC_TIMER0_TCLK1 */
+		       <0>,             /* SRC_TIMER0_TCLK2 */
+		...
+	};
+

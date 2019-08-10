@@ -1,0 +1,34 @@
+Nexell USB2 PHY
+-----------------------
+
+Required properties:
+- compatible : should be one of the listed compatibles:
+	 "nexell,nxp3220-usb2-phy"
+- reg : a list of offset + length pairs
+- #phy-cells : from the generic phy bindings, must be 1
+- clocks and clock-names:
+	- the "ahb" clock is required by the usb block modules, used as gate
+	- the "apb" clock is required by the usb tieoff block, used as gate
+
+Optional properties:
+- otg,vbus-gpio: If present, specifies a gpio that needs to be activated for
+	the bus to be powered.
+- ehci,vbus-gpio: If present, specifies a gpio that needs to be activated for
+	the bus to be powered.
+- phy-supply: supply for USB phy
+
+Example:
+
+usb2phy: usb2phy@24030000 {
+	compatible = "nexell,nxp3220-usb2-phy";
+	reg = <0x24030000 0x200>;
+	#phy-cells = <1>;
+	clocks = <&cmu_usb CLK_USB_AHB>, <&cmu_usb CLK_USB_SYSREG_APB>;
+	clock-names = "ahb", "apb";
+};
+
+&usb2phy {
+        otg,vbus-gpio = <&gpio_c 12 GPIO_ACTIVE_HIGH>;
+        ehci,vbus-gpio = <&gpio_b 23 GPIO_ACTIVE_HIGH>;
+        status = "okay";
+};

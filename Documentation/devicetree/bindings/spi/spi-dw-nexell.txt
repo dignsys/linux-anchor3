@@ -1,0 +1,85 @@
+Synopsys DesignWare AMBA 2.0 Synchronous Serial Interface for NXP3220.
+
+Required properties:
+- compatible : "nexell,nxp3220-dw-spi"
+- reg : The register base for the controller.
+- interrupts : One interrupt, used by the controller.
+- clcoks : Must contain one entry, for the module clock.
+- spi-mode : Sets whether SPI operates in normal, dual, quad,
+	     and octal modes.
+	     Normal : 0x0,
+	     Dual   : 0x1,
+	     Quad   : 0x2,
+	     Octal  : 0x3
+- pinctrl-names : Uses "default", can use "sleep" if provided
+                   See ../pinctrl/pinctrl-binding.txt
+- pinctrl-0 : pin control group to be used for this controller.
+
+Optional properties:
+- cs-gpios : Specifies the gpio pis to be used for chipselects.
+- dmas : DMA specifier, consisting of a phandle to DMA controller node
+- dma-names : Names for the dma channels
+- num-cs : The number of chipselects. If omitted, this will default to 4.
+- reg-io-width : The I/O register width (in bytes) implemented by this
+  device.  Supported values are 2 or 4 (the default).
+- resets : phandle of the internal reset line
+- slave-sel-offset : Register offset to configure slave mode
+- spi-slave : make spi to slave mode
+- spi-dma: Set to run dma mode if transfer size is bigger than fifo length.
+- syscon : a pointer to the syscon node so we can access the syscon registers
+          to set the slave mode.
+- status : Set node status. disabled or okay
+
+Child nodes as per the generic SPI binding.
+
+In sub node with m25p90 of flash
+- #address-cells: Number of cells required to define a chip select
+		address on the SPI bus. Should be set to 1.
+- #size-cells: specifies the number of cells used to represent the size
+		of an address.
+- compatible: should be "m25p80", "jedec,spi-nor"
+- reg: Chip select address of device.
+- spi-max-frequency: Maximum SPI clocking speed of device in Hz.
+- disable-4byte-address: Disable 4byte address mode.
+- m25p,fast-read: Set whether m25p supports fast-read.
+- spi-cpol: Empty property indicating device requires inverse clock
+	    polarity (CPOL) mode.
+- spi-cpha: Empty property indicating device requires shifted clock
+            phase (CPHA) mode.
+
+In sub node of partition@0
+- label: Name of patition.
+- reg : start address and length to partition.
+
+Example:
+in dtsi file
+	spi0: spi@30000000 {
+		compatible = "nexell,nxp3220-dw-spi";
+		reg = <0x30000000 0x1000>;
+		interrupts = <GIC_SPI 93 4>;
+		clocks = <&cmu CLK_SPI0_CORE>
+			<&cmu CLK_SPI0_APB>;
+		clock-names = "core", "apb";
+		num-cs = <1>;
+		spi-mode = <0>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&spi0_bus>;
+		status = "disabled";
+
+		flash: m25p80 {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			compatible = "m25p80", "jedec,spi-nor";
+			reg = <0>;
+			spi-max-frequency = <1000000>;
+			disable-4byte-address;
+			m25p,fast-read;
+			spi-cpol;
+			spi-cpha;
+
+			partition@0 {
+				label = "part0";
+				reg = <0x500000 0x7b00000>;
+			};
+		};
+	};

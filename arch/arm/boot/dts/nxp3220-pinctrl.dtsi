@@ -1,0 +1,914 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (C) 2018  Nexell Co., Ltd.
+ * Author: Bongyu, KOO <freestyle@nexell.co.kr>
+ */
+
+#include <dt-bindings/pinctrl/nexell.h>
+
+#define PWR_PIN(_dom, _pin, _drv, _val, _pull)				\
+	_pin {								\
+		nexell,pin-pwr-domain = <NX_PIN_PWR_DOMAIN_ ##_dom>;	\
+		nexell,pins = #_pin;					\
+		nexell,pin-pwr-drv = <NX_PIN_PWR_ ##_drv>;		\
+		nexell,pin-pwr-val = <NX_PIN_PWR_RETEN_ ##_val>;	\
+		nexell,pin-pwr-pull = <NX_PIN_PWR_PULL_ ##_pull>;	\
+	}
+
+#define PWR_PIN_DEF(_dom, _pin) PWR_PIN(_dom, _pin, NONE, LOW, PREV)
+#define PWR_PIN_INPUT(_dom, _pin) PWR_PIN(_dom, _pin, INPUT, LOW, PREV)
+
+&pinctrl_0 {
+	gpio_a: gpioa {
+		gpio-controller;
+		#gpio-cells = <2>;
+
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
+
+	gpio_b: gpiob {
+		gpio-controller;
+		#gpio-cells = <2>;
+
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
+
+	gpio_c: gpioc {
+		gpio-controller;
+		#gpio-cells = <2>;
+
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
+
+	gpio_d: gpiod {
+		gpio-controller;
+		#gpio-cells = <2>;
+
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
+
+	gpio_e: gpioe {
+		gpio-controller;
+		#gpio-cells = <2>;
+
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
+
+	alive_0: alive {
+		gpio-controller;
+		#gpio-cells = <2>;
+
+		interrupt-controller;
+		#interrupt-cells = <2>;
+	};
+
+	dp_de: dp-de {
+		nexell,pins = "gpioa-16";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	dp_vclk: dp-vclk {
+		nexell,pins = "gpioa-17";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	dp_vsync: dp-vsync {
+		nexell,pins = "gpioa-15";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	dp_hsync: dp-hsync {
+		nexell,pins = "gpioa-14";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	dp_blue: dp-blue {
+		nexell,pins = "gpioa-0", "gpioa-1", "gpioa-2", "gpioa-3",
+			      "gpioa-4", "gpioa-5", "gpioa-6", "gpioa-7";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	dp_green: dp-green {
+		nexell,pins = "gpioa-8", "gpioa-9", "gpioa-10", "gpioa-11",
+			      "gpioa-12", "gpiod-0", "gpiod-1", "gpiod-2";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	dp_red: dp-red {
+		nexell,pins = "gpiod-3", "gpiod-4", "gpiod-5", "gpiod-9",
+			      "gpiod-6", "gpiod-7", "gpiod-8", "gpioa-18";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	gmac0_pins: gmac0_pins {
+		gmac0_txd: gmac-txd {
+			nexell,pins = "gpioc-18", "gpioc-19", "gpioc-20",
+				      "gpioc-21";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR2>;
+		};
+
+		gmac0_rxd: gmac-rxd {
+			nexell,pins = "gpioc-24", "gpioc-25", "gpioc-26",
+				      "gpioc-27";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR3>;
+		};
+
+		gmac0_txen: gmac-txen {
+			nexell,pins = "gpioc-22";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR3>;
+		};
+
+		gmac0_rxen: gmac-rxen {
+			nexell,pins = "gpioc-28";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR3>;
+		};
+
+		gmac0_mdc: gmac-mdc {
+			nexell,pins = "gpioc-31";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR3>;
+		};
+
+		gmac0_mdio: gmac-mdio {
+			nexell,pins = "gpioc-30";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR3>;
+		};
+
+		gmac0_rxclk: gmac-rxclk {
+			nexell,pins = "gpioc-29";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR3>;
+		};
+
+		gmac0_txclk: gmac-txclk {
+			nexell,pins = "gpioc-23";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR3>;
+		};
+
+		gmac0_phyint: gmac-phyint {
+			nexell,pins = "alive-4";
+			nexell,pin-function = <NX_PIN_FUNC0>;
+			nexell,pin-pull = <NX_PIN_PULL_UP>;
+			nexell,pin-strength = <NX_PIN_STR1>;
+		};
+
+		gmac0_pme: gmac-pme {
+			nexell,pins = "alive-6";
+			nexell,pin-function = <NX_PIN_FUNC0>;
+			nexell,pin-pull = <NX_PIN_PULL_UP>;
+			nexell,pin-strength = <NX_PIN_STR1>;
+		};
+	};
+
+	gmac1_pins: gmac1_pins {
+		gmac1_txd: gmac-txd {
+			nexell,pins = "gpiod-1", "gpiod-2";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR0>;
+		};
+
+		gmac1_rxd: gmac-rxd {
+			nexell,pins = "gpiod-4", "gpiod-5";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR0>;
+		};
+
+		gmac1_txen: gmac-txen {
+			nexell,pins = "gpiod-3";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR0>;
+		};
+
+		gmac1_rxen: gmac-rxen {
+			nexell,pins = "gpiod-6";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR0>;
+		};
+
+		gmac1_mdc: gmac-mdc {
+			nexell,pins = "gpiod-8";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR0>;
+		};
+
+		gmac1_mdio: gmac-mdio {
+			nexell,pins = "gpiod-7";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR0>;
+		};
+
+		gmac1_txclk: gmac-txclk {
+			nexell,pins = "gpiod-0";
+			nexell,pin-function = <NX_PIN_FUNC1>;
+			nexell,pin-pull = <NX_PIN_PULL_NONE>;
+			nexell,pin-strength = <NX_PIN_STR0>;
+		};
+
+		gmac1_phyint: gmac-phyint {
+			nexell,pins = "alive-7";
+			nexell,pin-function = <NX_PIN_FUNC0>;
+			nexell,pin-pull = <NX_PIN_PULL_UP>;
+			nexell,pin-strength = <NX_PIN_STR0>;
+		};
+	};
+
+	i2c0_bus: i2c0-bus {
+		nexell,pins = "gpiob-27", "gpiob-28";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	i2c1_bus: i2c1-bus {
+		nexell,pins = "gpiob-29", "gpiob-30";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	i2c2_bus: i2c2-bus {
+		nexell,pins = "gpioa-0", "gpioa-1";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	i2c3_bus: i2c3-bus {
+		nexell,pins = "gpioa-2", "gpioa-3";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	i2c4_bus: i2c4-bus {
+		nexell,pins = "gpioa-4", "gpioa-5";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	i2s0_bus: i2s0-bus {
+		nexell,pins = "gpioa-19", "gpioa-20", "gpioa-21",
+				"gpioa-22", "gpioa-23";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	i2s1_bus: i2s1-bus {
+		nexell,pins = "gpioa-24", "gpioa-25", "gpioa-26",
+				"gpioa-27", "gpioa-28";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	i2s2_bus: i2s2-bus {
+		nexell,pins = "gpioa-14", "gpioa-15", "gpioa-16",
+				"gpioa-17", "gpioa-18";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	i2s3_bus: i2s3-bus {
+		nexell,pins = "gpioc-8", "gpioc-9", "gpioc-10",
+				"gpioc-11", "gpioc-12";
+		nexell,pin-function = <NX_PIN_FUNC3>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mcan0_bus: mcan0 {
+		nexell,pins = "gpiod-30", "gpiod-31";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mcan1_bus: mcan1 {
+		nexell,pins = "gpioe-0", "gpioe-1";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc0_clk: mmc0-clk {
+		nexell,pins = "gpiob-20";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc0_cmd: mmc0-cmd {
+		nexell,pins = "gpiob-21";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc0_bus1: mmc0-bus1 {
+		nexell,pins = "gpiob-9";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc0_bus4: mmc0-bus4 {
+		nexell,pins = "gpiob-9", "gpiob-10","gpiob-11", "gpiob-12";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc0_bus8: mmc0-bus8 {
+		nexell,pins = "gpiob-9", "gpiob-10","gpiob-11", "gpiob-12",
+			      "gpiob-13", "gpiob-14", "gpiob-15", "gpiob-16";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc1_clk: mmc1-clk {
+		nexell,pins = "gpiob-1";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc1_cmd: mmc1-cmd {
+		nexell,pins = "gpiob-2";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc1_bus1: mmc1-bus1 {
+		nexell,pins = "gpioa-29";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc1_bus4: mmc1-bus4 {
+		nexell,pins = "gpioa-29", "gpioa-30", "gpioa-31", "gpiob-0";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc2_clk: mmc2_clk {
+		nexell,pins = "gpiob-7";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc2_cmd: mmc2_cmd {
+		nexell,pins = "gpiob-8";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc2_bus1: mmc2-bus1 {
+		nexell,pins = "gpiob-3";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	mmc2_bus4: mmc2-bus4 {
+		nexell,pins = "gpiob-3", "gpiob-4", "gpiob-5", "gpiob-6";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	nand_data: nand-data {
+		nexell,pins = "gpiob-9", "gpiob-10", "gpiob-11", "gpiob-12",
+			      "gpiob-13", "gpiob-14", "gpiob-15", "gpiob-16",
+			      "gpiob-17", "gpiob-18", "gpiob-21", "gpiob-22",
+			      "gpiob-23", "gpiob-24";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	nand_cs0: nand-cs0 {
+		nexell,pins = "gpiob-19";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	nand_cs1: nand-cs1 {
+		nexell,pins = "gpiob-20";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	otg_vbus_en: otg-vbus-en {
+		nexell,pins = "gpioc-15";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	pdm_lr0: pdm-lr0{
+		nexell,pins = "gpioc-9";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	pdm_lr1: pdm-lr1 {
+		nexell,pins = "gpioc-10";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	pdm_lr2: pdm-lr2 {
+		nexell,pins = "gpiod-4";
+		nexell,pin-function = <NX_PIN_FUNC3>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	pdm_lr3: pdm-lr3 {
+		nexell,pins = "gpiod-5";
+		nexell,pin-function = <NX_PIN_FUNC3>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	pdm_strobe: pdm-strobe {
+		nexell,pins = "gpioc-11";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	pwm0_pin: pwm0 {
+		nexell,pins = "gpioc-1";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	pwm1_pin: pwm1 {
+		nexell,pins = "gpioc-2";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	pwm2_pin: pwm2 {
+		nexell,pins = "gpioc-4";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	pwm3_pin: pwm3 {
+		nexell,pins = "gpioc-5";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	rtc_out: rtc-out {
+		nexell,pins = "alive-12";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	spi0_bus: spi0-bus {
+		nexell,pins = "gpiob-31", "gpioc-0", "gpioc-3";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	spi1_bus: spi1-bus {
+		nexell,pins = "gpioa-6", "gpioa-7", "gpioa-8";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	spi2_bus: spi2-bus {
+		nexell,pins = "gpioa-10", "gpioa-11", "gpioa-12";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart0_bus: uart0-bus {
+		nexell,pins = "gpiod-10", "gpiod-11";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart0_485: uart0-485 {
+		nexell,pins = "gpiod-30", "gpiod-31";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart1_bus: uart1-bus {
+		nexell,pins = "gpiod-12", "gpiod-13";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart1_485: uart1-485 {
+		nexell,pins = "gpioe-0", "gpioe-1";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart2_bus: uart2-bus {
+		nexell,pins = "gpiod-14", "gpiod-15";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart3_bus: uart3-bus {
+		nexell,pins = "gpiod-16", "gpiod-17";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart4_bus: uart4-bus {
+		nexell,pins = "gpiod-18", "gpiod-19";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart4_485: uart4-485 {
+		nexell,pins = "gpiod-20", "gpiod-21";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart4_hflow: uart4-hflow {
+		nexell,pins = "gpiod-20", "gpiod-21";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart5_bus: uart5-bus {
+		nexell,pins = "gpiod-22", "gpiod-23";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart5_485: uart5-485 {
+		nexell,pins = "gpiod-24", "gpiod-25";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+
+	uart5_hflow: uart5-hflow {
+		nexell,pins = "gpiod-24", "gpiod-25";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart6_bus: uart6-bus {
+		nexell,pins = "gpiod-26", "gpiod-27";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	uart6_hflow: uart6-hflow {
+		nexell,pins = "gpiod-28", "gpiod-29";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid0_vfield: vid0-vfield {
+		nexell,pins = "gpioe-14";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid0_vmclk: vid0-vmclk {
+		nexell,pins = "gpioe-15";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid0_vde: vid0-vde {
+		nexell,pins = "gpioe-11";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid0_vclk: vid0-vclk {
+		nexell,pins = "gpioe-10";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid0_sync: vid0-sync {
+		nexell,pins = "gpioe-12", "gpioe-13";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid0_data_8: vid0-data-8 {
+		nexell,pins = "gpioe-2", "gpioe-3", "gpioe-4", "gpioe-5",
+			      "gpioe-6", "gpioe-7", "gpioe-8", "gpioe-9";
+		nexell,pin-function = <NX_PIN_FUNC1>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid0_data_16: vid0-data-16 {
+		nexell,pins = "gpioa-2", "gpioa-3", "gpioa-4", "gpioa-5",
+			      "gpioa-6", "gpioa-7", "gpioa-8", "gpioa-9";
+		nexell,pin-function = <NX_PIN_FUNC4>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid1_vfield: vid1-vfield {
+		nexell,pins = "gpioa-0";
+		nexell,pin-function = <NX_PIN_FUNC3>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid1_vmclk: vid1-vmclk {
+		nexell,pins = "gpioa-1";
+		nexell,pin-function = <NX_PIN_FUNC3>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid1_vde: vid1-vde {
+		nexell,pins = "gpioa-13";
+		nexell,pin-function = <NX_PIN_FUNC3>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid1_vclk: vid1-vclk {
+		nexell,pins = "gpioa-10";
+		nexell,pin-function = <NX_PIN_FUNC3>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid1_sync: vid1-sync {
+		nexell,pins = "gpioa-11", "gpioa-12";
+		nexell,pin-function = <NX_PIN_FUNC3>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid1_data_8: vid1-data-8 {
+		nexell,pins = "gpioa-2", "gpioa-3", "gpioa-4", "gpioa-5",
+			      "gpioa-6", "gpioa-7", "gpioa-8", "gpioa-9";
+		nexell,pin-function = <NX_PIN_FUNC3>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	vid1_data_16: vid1-data-16 {
+		nexell,pins = "gpioe-2", "gpioe-3", "gpioe-4", "gpioe-5",
+			      "gpioe-6", "gpioe-7", "gpioe-8", "gpioe-9";
+		nexell,pin-function = <NX_PIN_FUNC2>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	peri0_pwr_pin: peri0-pwr-pin {
+		PWR_PIN_INPUT(PERI0, gpioa-0);
+		PWR_PIN_INPUT(PERI0, gpioa-1);
+		PWR_PIN_INPUT(PERI0, gpioa-2);
+		PWR_PIN_INPUT(PERI0, gpioa-3);
+		PWR_PIN_INPUT(PERI0, gpioa-4);
+		PWR_PIN_INPUT(PERI0, gpioa-5);
+		PWR_PIN_INPUT(PERI0, gpioa-6);
+		PWR_PIN_INPUT(PERI0, gpioa-7);
+		PWR_PIN_INPUT(PERI0, gpioa-8);
+		PWR_PIN_INPUT(PERI0, gpioa-9);
+		PWR_PIN_INPUT(PERI0, gpioa-10);
+		PWR_PIN_INPUT(PERI0, gpioa-11);
+		PWR_PIN_INPUT(PERI0, gpioa-12);
+		PWR_PIN_INPUT(PERI0, gpioa-13);
+		PWR_PIN_INPUT(PERI0, gpioa-14);
+		PWR_PIN_INPUT(PERI0, gpioa-15);
+		PWR_PIN_INPUT(PERI0, gpioa-16);
+		PWR_PIN_INPUT(PERI0, gpioa-17);
+		PWR_PIN_INPUT(PERI0, gpioa-18);
+		PWR_PIN_INPUT(PERI0, gpioa-19);
+		PWR_PIN_INPUT(PERI0, gpioa-20);
+		PWR_PIN_INPUT(PERI0, gpioa-21);
+		PWR_PIN_INPUT(PERI0, gpioa-22);
+		PWR_PIN_INPUT(PERI0, gpioa-23);
+		PWR_PIN_INPUT(PERI0, gpioa-24);
+		PWR_PIN_INPUT(PERI0, gpioa-25);
+		PWR_PIN_INPUT(PERI0, gpioa-26);
+		PWR_PIN_INPUT(PERI0, gpioa-27);
+		PWR_PIN_INPUT(PERI0, gpioa-28);
+	};
+
+	sdmmc_pwr_pin: sdmmc-pwr-pin {
+		PWR_PIN_DEF(SDMMC, gpioa-29);
+		PWR_PIN_DEF(SDMMC, gpioa-30);
+		PWR_PIN_DEF(SDMMC, gpioa-31);
+		PWR_PIN_DEF(SDMMC, gpiob-0);
+		PWR_PIN_DEF(SDMMC, gpiob-1);
+		PWR_PIN_DEF(SDMMC, gpiob-2);
+		PWR_PIN_DEF(SDMMC, gpiob-3);
+		PWR_PIN_DEF(SDMMC, gpiob-4);
+		PWR_PIN_DEF(SDMMC, gpiob-5);
+		PWR_PIN_DEF(SDMMC, gpiob-6);
+		PWR_PIN_DEF(SDMMC, gpiob-7);
+		PWR_PIN_DEF(SDMMC, gpiob-8);
+	};
+
+	nand_pwr_pin: nand-pwr-pin {
+		PWR_PIN_DEF(NAND, gpiob-9);
+		PWR_PIN_DEF(NAND, gpiob-10);
+		PWR_PIN_DEF(NAND, gpiob-11);
+		PWR_PIN_DEF(NAND, gpiob-12);
+		PWR_PIN_DEF(NAND, gpiob-13);
+		PWR_PIN_DEF(NAND, gpiob-14);
+		PWR_PIN_DEF(NAND, gpiob-15);
+		PWR_PIN_DEF(NAND, gpiob-16);
+		PWR_PIN_DEF(NAND, gpiob-17);
+		PWR_PIN_DEF(NAND, gpiob-18);
+		PWR_PIN_DEF(NAND, gpiob-19);
+		PWR_PIN_DEF(NAND, gpiob-20);
+		PWR_PIN_DEF(NAND, gpiob-21);
+		PWR_PIN_DEF(NAND, gpiob-22);
+		PWR_PIN_DEF(NAND, gpiob-23);
+		PWR_PIN_DEF(NAND, gpiob-24);
+	};
+
+	peri1_pwr_pin: peri1-pwr-pin {
+		PWR_PIN_INPUT(PERI1, gpiob-25);
+		PWR_PIN_INPUT(PERI1, gpiob-26);
+		PWR_PIN_INPUT(PERI1, gpiob-27);
+		PWR_PIN_INPUT(PERI1, gpiob-28);
+		PWR_PIN_INPUT(PERI1, gpiob-29);
+		PWR_PIN_INPUT(PERI1, gpiob-30);
+		PWR_PIN_INPUT(PERI1, gpiob-31);
+		PWR_PIN_INPUT(PERI1, gpioc-0);
+		PWR_PIN_INPUT(PERI1, gpioc-1);
+		PWR_PIN_INPUT(PERI1, gpioc-2);
+		PWR_PIN_INPUT(PERI1, gpioc-3);
+		PWR_PIN_INPUT(PERI1, gpioc-4);
+		PWR_PIN_INPUT(PERI1, gpioc-5);
+		PWR_PIN_INPUT(PERI1, gpioc-6);
+		PWR_PIN_INPUT(PERI1, gpioc-7);
+		PWR_PIN_INPUT(PERI1, gpioc-8);
+		PWR_PIN_INPUT(PERI1, gpioc-9);
+		PWR_PIN_INPUT(PERI1, gpioc-10);
+		PWR_PIN_INPUT(PERI1, gpioc-11);
+		PWR_PIN_INPUT(PERI1, gpioc-12);
+		PWR_PIN_INPUT(PERI1, gpioc-13);
+		PWR_PIN_INPUT(PERI1, gpioc-14);
+		PWR_PIN_INPUT(PERI1, gpioc-15);
+		PWR_PIN_INPUT(PERI1, gpioc-16);
+		PWR_PIN_INPUT(PERI1, gpioc-17);
+	};
+
+	gmac_pwr_pin: gmac-pwr-pin {
+		PWR_PIN_DEF(GMAC, gpioc-18);
+		PWR_PIN_DEF(GMAC, gpioc-19);
+		PWR_PIN_DEF(GMAC, gpioc-20);
+		PWR_PIN_DEF(GMAC, gpioc-21);
+		PWR_PIN_DEF(GMAC, gpioc-22);
+		PWR_PIN_DEF(GMAC, gpioc-23);
+		PWR_PIN_DEF(GMAC, gpioc-24);
+		PWR_PIN_DEF(GMAC, gpioc-25);
+		PWR_PIN_DEF(GMAC, gpioc-26);
+		PWR_PIN_DEF(GMAC, gpioc-27);
+		PWR_PIN_DEF(GMAC, gpioc-28);
+		PWR_PIN_DEF(GMAC, gpioc-29);
+		PWR_PIN_DEF(GMAC, gpioc-30);
+		PWR_PIN_DEF(GMAC, gpioc-31);
+		PWR_PIN_DEF(GMAC, gpiod-0);
+		PWR_PIN_DEF(GMAC, gpiod-1);
+		PWR_PIN_DEF(GMAC, gpiod-2);
+		PWR_PIN_DEF(GMAC, gpiod-3);
+		PWR_PIN_DEF(GMAC, gpiod-4);
+		PWR_PIN_DEF(GMAC, gpiod-5);
+		PWR_PIN_DEF(GMAC, gpiod-6);
+		PWR_PIN_DEF(GMAC, gpiod-7);
+		PWR_PIN_DEF(GMAC, gpiod-8);
+		PWR_PIN_DEF(GMAC, gpiod-9);
+	};
+
+	peri2_pwr_pin: peri2-pwr-pin {
+		PWR_PIN_INPUT(PERI2, gpiod-10);
+		PWR_PIN_INPUT(PERI2, gpiod-11);
+		PWR_PIN_INPUT(PERI2, gpiod-12);
+		PWR_PIN_INPUT(PERI2, gpiod-13);
+		PWR_PIN_INPUT(PERI2, gpiod-14);
+		PWR_PIN_INPUT(PERI2, gpiod-15);
+		PWR_PIN_INPUT(PERI2, gpiod-16);
+		PWR_PIN_INPUT(PERI2, gpiod-17);
+		PWR_PIN_INPUT(PERI2, gpiod-18);
+		PWR_PIN_INPUT(PERI2, gpiod-19);
+		PWR_PIN_INPUT(PERI2, gpiod-20);
+		PWR_PIN_INPUT(PERI2, gpiod-21);
+		PWR_PIN_INPUT(PERI2, gpiod-22);
+		PWR_PIN_INPUT(PERI2, gpiod-23);
+		PWR_PIN_INPUT(PERI2, gpiod-24);
+		PWR_PIN_INPUT(PERI2, gpiod-25);
+		PWR_PIN_INPUT(PERI2, gpiod-26);
+		PWR_PIN_INPUT(PERI2, gpiod-27);
+		PWR_PIN_INPUT(PERI2, gpiod-28);
+		PWR_PIN_INPUT(PERI2, gpiod-29);
+		PWR_PIN_INPUT(PERI2, gpiod-30);
+		PWR_PIN_INPUT(PERI2, gpiod-31);
+		PWR_PIN_INPUT(PERI2, gpioe-0);
+		PWR_PIN_INPUT(PERI2, gpioe-1);
+	};
+
+	vip_pwr_pin: vip-pwr-pin {
+		PWR_PIN_DEF(VIP, gpioe-2);
+		PWR_PIN_DEF(VIP, gpioe-3);
+		PWR_PIN_DEF(VIP, gpioe-4);
+		PWR_PIN_DEF(VIP, gpioe-5);
+		PWR_PIN_DEF(VIP, gpioe-6);
+		PWR_PIN_DEF(VIP, gpioe-7);
+		PWR_PIN_DEF(VIP, gpioe-8);
+		PWR_PIN_DEF(VIP, gpioe-9);
+		PWR_PIN_DEF(VIP, gpioe-10);
+		PWR_PIN_DEF(VIP, gpioe-11);
+		PWR_PIN_DEF(VIP, gpioe-12);
+		PWR_PIN_DEF(VIP, gpioe-13);
+		PWR_PIN_DEF(VIP, gpioe-14);
+		PWR_PIN_DEF(VIP, gpioe-15);
+	};
+};

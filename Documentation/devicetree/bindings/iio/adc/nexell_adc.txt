@@ -1,0 +1,34 @@
+Nexell's Analog to Digital Converter (ADC)
+
+The devicetree bindings are for the ADC driver written for Nexell's ADC.
+
+When the sampling is done, interrupt is rised, and then read the value.
+Please refer to the datasheet for more information.
+
+
+Required properties:
+  - compatible: Should be "nexell,<chip>-adc"
+    <chip> can be "s5p4418", "s5p6818", "nxp3220"
+  - reg: Should contain ADC registers location and length
+  - interrupts: Should contain the IRQ line for the ADC
+  - clocks : From common clock bindings - handles to clocks specified in
+        "clock-names" property, in the same order.
+  - clock-names: From common clock bindings - list of clock input names used by
+        ADC block. Should contain "adc"
+  - sample_rate: ADC channel sampling rate. (Max 1MHz according to datasheet)
+  - #io-channel-cells: <1> - As ADC has multiple outputs.
+        For details about this, see:
+            Documentation/devicetree/bindings/iio/iio-bindings.txt
+  - touchscreen-enable: Enable the touchscreen feature on the adc controller.
+
+Example:
+	adc:adc@20600000 {
+		compatible = "nexell,nxp3220-adc";
+		reg = <20600000 0x1000>;
+		interrupts = <0 IRQ_ADC0_MODULE 0>;
+		clocks = <&cmu CLK_ADC0_APB>;
+		clock-names = "adc";
+		sample_rate = <200000>;
+		#io-channel-cells = <1>;
+		touchscreen-enable;
+	};

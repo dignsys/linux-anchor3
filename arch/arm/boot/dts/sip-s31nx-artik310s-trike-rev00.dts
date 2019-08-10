@@ -1,0 +1,14 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (C) 2018  Nexell Co., Ltd.
+ * Author: JungHyun, Kim <jhkim@nexell.co.kr>
+ */
+
+/dts-v1/;
+#include "sip-s31nx-artik310s-trike-common.dtsi"
+
+/ {
+	model = "Samsung artik310s trike board based on sip-s31nx";
+	compatible = "samsung,artik310s-trike", "samsung,artik310s",
+		"nexell,nxp3220";
+};

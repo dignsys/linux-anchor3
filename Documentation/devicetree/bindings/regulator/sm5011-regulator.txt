@@ -1,0 +1,68 @@
+Binding for Silicon Mitus SM5011 regulators
+
+This is a part of the device tree bindings of SM5011 multi-function device.
+More information can be found in ../mfd/sm5011.txt file.
+
+The SM5011 PMIC has 5 Buck converters and 20 LDOs that can be controlled
+over I2C.
+
+Following properties should be present in main device node of the MFD chip.
+
+Optional node:
+- enable-pwrstm : This boolean value enables PWRSTM feature.
+- voltage-regulators : The regulators of sm5011 have to be instantiated
+  under subnode named "voltage-regulators" using the following format.
+
+	regulator_name {
+		regulator-compatible = LDOn/BUCKn
+		standard regulator constraints....
+	};
+	refer Documentation/devicetree/bindings/regulator/regulator.txt
+
+  The regulator node's name should be initialized with a string
+to get matched with their hardware counterparts as follow:
+
+	-LDOn 	:	for LDOs, where n can be in range 1 to 20.
+			example: LDO1, LDO2, LDO26.
+	-BUCKn 	:	for BUCKs, where n can be in range 2 to 6.
+			example: BUCK2, BUCK5, BUCK6.
+  sub-node:
+	- pwrstm-enter/exit-slot : This integer value indicates the on/off
+slot when pmic enter/exit PWRSTM mode. It can be 0 to 3.(4 slots are supported)
+
+Example:
+
+	sm5011: sm5011-pmic@47 {
+		compatible = "sm,sm5011";
+		interrupt-parent = <&alive_0>;
+		interrupts = <1 IRQ_TYPE_NONE>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pmic_irq>;
+		reg = <0x47>;
+
+		voltage-regulators {
+			buck2_reg: BUCK2 {
+				regulator-name = "VDD_CPU_1P0";
+				regulator-min-microvolt = <562500>;
+				regulator-max-microvolt = <2150000>;
+				regulator-always-on;
+				regulator-boot-on;
+				pwrstm-enter-slot = <3>;
+				pwrstm-exit-slot = <0>;
+
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
+			};
+
+			ldo1_reg: LDO1 {
+				regulator-name = "VDD_PLL0_1P0";
+				regulator-min-microvolt = <800000>;
+				regulator-max-microvolt = <3350000>;
+				regulator-always-on;
+				regulator-boot-on;
+			};
+		};
+	};
+
+

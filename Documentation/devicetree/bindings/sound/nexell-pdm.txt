@@ -1,0 +1,58 @@
+Nexell PDM controller
+
+Required Properties:
+- compatible : should be one of the following.
+               nexell,nxp3220-pdm: for 16bit 4 channel pdm to pcm.
+
+- reg: physical base address and size of the pdm registers map and
+	pdm internal sram.
+- reg-names: Should be "pdm" and "sram".
+- clocks: Must contain an entry for each entry in clock-names.
+- clock-names: Must include the following entries:
+ - axi : pdm bus clock name
+ - core : pdm internal clock controller and make strobe clock.
+- interrupts: Interrupt specifier for the PDM Peripheral/DMA
+- syscon: a pointer to the syscon node so we can access the syscon registers
+	 to set the iis reference channels.
+- pinctrl-0: Should specify pin control groups used for this controller.
+ - pdm_strobe: output clock for external digital mic.
+ - pdm_lr0: input data for pad 0's Left / Right channel
+ - pdm_lr1: input data for pad 1's Left / Right channel
+ - pdm_lr2: input data for pad 2's Left / Right channel
+ - pdm_lr3: input data for pad 3's Left / Right channel
+- pinctrl-names: Should contain only one value - "default".
+
+Optional Properties:
+- ref-iis: set iis reference channel number to synchronize with pdm data.
+- ref-sample-rate: set iis's sample rate to synchronize with pdm data.
+- sample-rate: pdm to pcm sample rate. support 8,16,32,48khz
+- strobe-hz: the strobe clock frequency applied to mic.
+- filter-coeff: pdm's filter coefficient nodes and values.
+- select-pads: The PDM input channel is 8 channels (pdm_lr0/1/2/3),
+               but the PDM operates only 4 channels with 2 pads,
+	       you can select input pads number.
+- assigned-core-freqeuncy: skip pdm core clock set, use default core clock.
+
+Example:
+
+pdm: pdm0@20c00000 {
+	compatible = "nexell,nxp3220-pdm";
+	#sound-dai-cells = <0>;
+	reg = <0x20c00000 0x1000>, <0x20c04000 0x4000>;
+	reg-names = "pdm", "sram";
+	clocks = <&cmu CLK_PDM0_AXI>,
+		<&cmu CLK_PDM0_CORE>;
+	clock-names = "axi", "core";
+	interrupts = <GIC_SPI 67 IRQ_TYPE_NONE>;
+	pinctrl-0 = <&pdm_strobe>, <&pdm_lr0>, <&pdm_lr1>;
+	pinctrl-names = "default";
+	syscon = <&sys_reg_sys>;
+	status = "disabled";
+};
+
+&pdm {
+	sample-rate = <16000>;
+	assigned-clocks = <&cmu CLK_PDM0_AXI>;
+	assigned-clock-rates = <200000000>;
+	status = "okay";
+};

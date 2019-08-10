@@ -1,0 +1,69 @@
+/* Disable gmac to enable pdm 2,3 on artik310s FF board */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/clock/nxp3220-clk.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+
+/ {
+	compatible = "samsung,artik310s-trike";
+
+	fragment@0 {
+		target = <&gmac1>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@1 {
+		target-path = "/";
+		__overlay__ {
+			sound-pdm {
+				status = "disabled";
+			};
+		};
+	};
+
+	fragment@2 {
+		target = <&pdm>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@3 {
+		target = <&soc>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			overlay_pdm: pdm_1@20c00000 {
+				compatible = "nexell,nxp3220-pdm";
+				#sound-dai-cells = <0>;
+				reg = <0x20c00000 0x1000>, <0x20c04000 0x4000>;
+				reg-names = "pdm", "sram";
+				assigned-clocks = <&cmu CLK_SRC_PDM0_CORE>,
+						  <&cmu CLK_SRC_PDM0_AXI>,
+						  <&cmu CLK_PDM0_AXI>,
+						  <&cmu CLK_PLL1_DIV>;
+				assigned-clock-parents = <&cmu CLK_PLL1_DIV>,
+							 <&cmu CLK_PLL1_DIV>,
+							 <0>,
+							 <0>;
+				assigned-clock-rates = <0>, <0>, <200000000>, <0>;
+				clocks = <&cmu CLK_PDM0_AXI>,
+				       <&cmu CLK_PDM0_CORE>;
+				clock-names = "axi", "core";
+				interrupts = <GIC_SPI 67 IRQ_TYPE_NONE>;
+				pinctrl-names = "default";
+				pinctrl-0 = <&pdm_strobe>, <&pdm_lr0>, <&pdm_lr1>, <&pdm_lr2>, <&pdm_lr3>;
+				syscon = <&sys_reg_sys>;
+				ref-iis = <0>;
+				sample-rate = <16000>;
+				status = "okay";
+			};
+		};
+	};
+};
+

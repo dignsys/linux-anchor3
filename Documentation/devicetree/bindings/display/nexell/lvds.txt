@@ -1,0 +1,84 @@
+Device-Tree bindings for Nexell DRM generic RGB panel output driver
+
+Required properties for display soc panel driver:
+- compatible: value should be "nexell,nxp3220-drm-lvds".
+- reg: Physical base address and length of the lvds controller's registers.
+- clocks: Must contain an entry for each entry in clock-names.
+- clock-names: Must include the following entries:
+ - vclk : lvds clock name
+ - phy : lvds phy clock name
+
+- port: A port node with endpoint definitions as defined in
+	Documentation/devicetree/bindings/media/video-interfaces.txt.
+
+- display-timing: typical videomode of lcd panel. Multiple video modes
+    can be listed if the panel supports multiple timings, but the 'native-mode'
+    should be the preferred/default resolution.  Refer to
+    Documentation/devicetree/bindings/display/panel/display-timing.txt
+    for display timing binding details.
+- width-mm: physical panel width [mm]
+- height-mm: physical panel height [mm]
+
+- display-config: sub node to config display sync parameters.
+ - out-format: specifies display sync output format
+ - invert-field: pecifies internal field polarity
+    		   0: normal field(low is odd), 1: invert field(low is even)
+ - swap-rb: swap red and blue component for rgb output
+ - yc-order: output order for YCbCr Output
+ - delay-mask: to adjust delay (rgb_pvd, hsync_cp1, vsync_fram, de_cp2)
+    		 if 0, set defalut delays
+ - delay-rgb-pvd: the delay value for RGB/PVD signal
+ - delay-hs-cp1: the delay value for HSYNC/CP1 signal
+ - delay-vs-frame: the delay value for VSYNC/FRAM signal
+ - delay-de-cp2: the delay value for DE/CP2 signal
+ - vsync-start-offs: start veritcal sync offset
+ - vsync-end-offs: end veritcla sync offset
+ - evsync-start-offs: start even veritcal sync offset
+ - evsync-end-offs: end even veritcal sync offset
+ - evfront-porch: even veritcal sync front porch
+ - evback-porch: even veritcal sync back porch
+
+- format: lvds format 0: VESA format, 1: JEDIA foramt, 2: user location
+- voltage-level: lvds tx driver output differential volatge level
+- voltage-output: output offset voltage control
+
+  Valid values for voltage-output:
+     - for the nxp3220
+     "LVDS_VOL_OFFS_0_8" : 0.8v 
+     "LVDS_VOL_OFFS_0_9" : 0.9v 
+     "LVDS_VOL_OFFS_1_0" : 1.0v 
+     "LVDS_VOL_OFFS_1_1" : 1.0v 
+
+Example:
+drm_lvds: drm_lvds@25150000 {
+	compatible = "nexell,nxp3220-drm-lvds";
+	reg = <0x25150000 0x1000>;
+	clocks = <&cmu_mm CLK_MM_LVDS_VCLK>,
+	       <&cmu_mm CLK_MM_LVDS_PHY>;
+	clock-names = "vclk", "phy";
+	resets = <&cmu_mm CLK_RESET_MM_LVDS_PHY>;
+	status = "disabled";
+};
+
+panel: panel {
+        compatible = "samsung,lms700kf23";
+        backlight = <&backlight>;
+        status = "okay";
+	port {
+		lvds_panel: endpoint {
+			remote-endpoint = <&lvds_out>;
+		};
+	};
+};
+
+&drm_lvds {
+        port {
+                lvds_out: endpoint {
+                        remote-endpoint = <&lvds_panel>;
+                };
+        };
+
+        display-config {
+                out-format = <3>; /* RGB888:3 */
+        };
+};

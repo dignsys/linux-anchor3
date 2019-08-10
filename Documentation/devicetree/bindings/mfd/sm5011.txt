@@ -1,0 +1,23 @@
+Silicon Mitus SM5011 multi-function device
+
+SM5011 is a multifunction device which can be operated as PMIC, RTC, 32kHz
+clock provider and Watchdog reset timer. It is interfaced with a host
+controller using i2c interface.
+
+Required properties:
+- compatible : Must be "sm,sm5011";
+- reg : 0x47 which is the i2c slave address of PMIC block.
+- interrupts : This i2c device has an IRQ line connected to the main SoC.
+- interrupt-parent : The parent interrupt controller.
+- pinctrl-names: pinctrl name of the interrupt line, "default"
+- pinctrl-0: specifies a pinctrl node of the interrupt line
+
+Example:
+	sm5011: sm5011-pmic@47 {
+		compatible = "sm,sm5011";
+		interrupt-parent = <&alive_0>;
+		interrupts = <1 IRQ_TYPE_NONE>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pmic_irq>;
+		reg = <0x47>;
+	};

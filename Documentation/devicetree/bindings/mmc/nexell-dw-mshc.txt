@@ -1,0 +1,69 @@
+* Nexell NXP3220 specific extensions to the Synopsys Designware Mobile
+  Storage Host Controller
+
+The Synopsys designware mobile storage host controller is used to interface
+a SoC with storage medium such as eMMC or SD/MMC cards. This file documents
+differences between the core Synopsys dw mshc controller properties described
+by synopsys-dw-mshc.txt and the properties used by the Nexell nxp3220 specific
+extensions to the Synopsys Designware Mobile Storage Host Controller.
+
+Required Properties:
+
+* compatible: should be
+	- "nexell,nxp3220-dw-mshc" : for controllers with nexell nxp3220.
+
+* nexell,drive_shift : Output drive clock phase shift. range is 0 ~ 7
+* nexell,sample_shift : Read sample clock phase shift. range is 0 ~ 7.
+
+* clock-names: input names of clocks used by the controller:
+  - "biu" - controller bus clock,
+  - "ciu" - cortrpller out clock.
+
+- clocks: phandles and specifiers for all clocks specified in "clock-names"
+  property, in the same order, according to clock bindings documentation [2].
+
+[1] Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+[2] Documentation/devicetree/bindings/clock/clock-bindings.txts
+
+Nodes fot nexell clock timing value:
+ - drive_dly, sample_dly : 1 step delay 1.2usec.
+ - drive_shift, sample_shift :  1 step shuft 90 degree.
+
+Optional properties:
+- soc,tieoff : phandle to the tieoff control.
+ use 8bit bus width ch2. Must set  1 NX_TIEOFF_MMC_8BIT Tieoff.
+
+Example:
+  The MSHC controller node can be split into two portions, SoC specific and
+  board specific portions as listed below.
+in dtsi:
+	dw_mmc0: dw_mmc@26080000 {
+		compatible = "nexell,nxp3220-dw-mshc";
+		interrupts = <GIC_SPI 82 IRQ_TYPE_NONE>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x26080000 0x1000>;
+		clock-frequency = <400000000>;
+		clock-names = "biu", "ciu";
+		clocks = <&cmu CLK_SDMMC0_AHB>,
+		      <&cmu CLK_SDMMC0_CORE>;
+		num-slots = <1>;
+		bus-width = <8>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&mmc0_bus>;
+		fifo-depth = <0x20>;
+		status = "disabled";
+	};
+
+in xxx.dts
+
+	&dw_mmc0 {
+		cap-mmc-highspeed;
+		broken-cd;
+		non-removable;
+		nexell,drive_shift = <0x03>;
+		nexell,sample_shift = <0x01>;
+		card-detect-delay = <200>;
+		disable-wp;
+		status = "okay";
+	};

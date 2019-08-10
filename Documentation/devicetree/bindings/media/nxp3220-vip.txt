@@ -1,0 +1,27 @@
+Nexell V4L2 VIP Device Tree bindings
+====================================
+
+VIP is Video Input Processor.
+The DT definitions can be found in include/dt-bindings/media/nxp3220-vip.h
+
+Required properties:
+- compatible	: must contain "nexell,nxp3220-vip"
+- reg		: the two register sets (physical address and length) for the VIP
+- interrupts	: ths VIP interrupt specifier
+- clock-names	: the VIP clock specifier
+- clocks	: the clock reference for VIP. must use value defined in clock dts
+- resets	: the reset reference for VIP. must use value defined in reset dts
+- module	: the VIP module number
+- status	: default is "disabled". when using, set to "okay"
+
+Example:
+	vip: vip@25100000 {
+		compatible = "nexell,nxp3220-vip";
+		reg = <0x25100000 0x1000>;
+		interrupts = <GIC_SPI 124 IRQ_TYPE_NONE>;
+		clock-names = "vip_axi", "vip_apb";
+		clocks = <&cmu_mm CLK_MM_VIP_AXI>,
+		       <&cmu_mm CLK_MM_VIP_APB>;
+		module = <0>;
+		status = "okay";
+	};

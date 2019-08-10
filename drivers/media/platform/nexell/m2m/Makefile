@@ -1,0 +1,1 @@
+obj-$(CONFIG_VIDEO_NXP3220_DEINTERLACER) += nxp3220-deinterlacer.o

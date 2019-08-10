@@ -1,0 +1,42 @@
+* Nexell NXP3220 Bus frequency device
+
+Required properties for all bus devices:
+- compatible: Should be "nexell,nxp3220-bus".
+- clock-names : the name of clock used by the bus, "bus".
+- clocks : phandles for clock specified in "clock-names" property.
+- operating-points-v2: the OPP table including frequency/voltage information
+  to support DVFS (Dynamic Voltage/Frequency Scaling) feature.
+- bus-names : the name of the bus.
+
+Required properties:
+- vdd-supply: the regulator to provide the bus with the voltage.
+- devfreq: the parent bus device.
+
+Example :
+	sys_bus_opp_table: bus_opp_table0 {
+		compatible = "operating-points-v2";
+		opp-shared;
+
+		opp-0 {
+			opp-hz = /bits/ 64 <100000000>;
+			opp-microvolt = <975000>;
+		};
+		opp-1 {
+			opp-hz = /bits/ 64 <166666667>;
+			opp-microvolt = <975000>;
+		};
+		opp-2 {
+			opp-hz = /bits/ 64 <333333334>;
+			opp-microvolt = <1000000>;
+		;
+	};
+
+	sys_bus: sys_bus {
+		compatible = "nexell,nxp3220-bus";
+		bus-name = "sys";
+		clocks = <&cmu CLK_SRC_SYS0_AXI>;
+		clock-names = "bus";
+		operating-points-v2 = <&sys_bus_opp_table>;
+		vdd-supply = <&buck5_reg>; /* "VDD_CORE_1P0" */
+		status = "okay";
+	};

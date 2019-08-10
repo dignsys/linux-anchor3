@@ -1,0 +1,16 @@
+Nexell nxp3220 ECID Controller
+==============================
+
+The nxp3220 ECID Controller provides ecid, guid, chipname.
+User can read by /sys interface and function call.
+
+Required properties:
+- compatible : "nexell,nxp3220-ecid"
+- reg : Offset and length of the register set for the controller device.
+
+Example:
+ecid@20060000 {
+	compatible = "nexell,nxp3220-ecid";
+	reg = <0x20060000 0x1000>;
+};
+

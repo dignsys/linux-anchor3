@@ -1,0 +1,5 @@
+/home2/Anchor3/nxp3220_yocto_r1/kernel-4.14/.kernel-meta/configs//./defconfig
+/home2/Anchor3/nxp3220_yocto_r1/kernel-4.14/.kernel-meta/configs//./defconfig
+/home2/Anchor3/nxp3220_yocto_r1/kernel-4.14/.kernel-meta/configs//./defconfig
+/home2/Anchor3/nxp3220_yocto_r1/kernel-4.14/.kernel-meta/configs//./defconfig
+/home2/Anchor3/nxp3220_yocto_r1/kernel-4.14/.kernel-meta/configs//./defconfig

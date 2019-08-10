@@ -1,0 +1,106 @@
+/* Enables DRM/RGB interface for artik310s explorer board. */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/nxp3220-clk.h>
+#include <dt-bindings/pinctrl/nexell.h>
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+	compatible = "samsung,artik310s-explorer";
+
+	fragment@0 {
+		target = <&spi_1>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@1 {
+		target = <&i2c_2>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@2 {
+		target = <&i2c_3>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@3 {
+		target = <&i2c_4>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@4 {
+		target = <&gmac1>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@5 {
+		target = <&i2c_1>;
+		__overlay__ {
+			status = "okay";
+			samsung,i2c-sda-delay = <100>;
+			samsung,i2c-max-bus-freq = <100000>;
+
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			hdmi_bridge {
+				compatible = "sil,sii9022";
+				reg = <0x3b>;
+				reset-gpio = <&alive_0 7 GPIO_ACTIVE_LOW>;
+
+				ports {
+					port@0 {
+						bridge_out: endpoint {
+							remote-endpoint = <&rgb_out>;
+						};
+					};
+				};
+			};
+		};
+	};
+
+	fragment@6 {
+		target = <&dp_vclk>;
+		__overlay__ {
+			nexell,pin-strength = <NX_PIN_STR1>;
+		};
+	};
+
+	fragment@7 {
+		target = <&drm_rgb>;
+		__overlay__ {
+			status = "ok";
+
+			max-resolution {
+				width = <1280>;
+				height = <720>;
+				refresh = <60>;
+			};
+
+			port {
+				rgb_out: endpoint {
+					remote-endpoint = <&bridge_out>;
+				};
+			};
+		};
+	};
+
+	fragment@8 {
+		target = <&drm>;
+		__overlay__ {
+			status = "ok";
+		};
+	};
+};

@@ -1,0 +1,8 @@
+#
+# scc v0.8
+# processed: Sun Jul 28 09:58:52 UTC 2019
+#
+# This is a scc output file, do not edit
+#
+# _reloc_dir /home2/Anchor3/nxp3220_yocto_r1/yocto/build/build-nxp3220-anchor3/tmp/work/nxp3220-poky-linux-gnueabi/linux-4.14-nexell
+kconf /home2/Anchor3/nxp3220_yocto_r1/yocto/build/build-nxp3220-anchor3/tmp/work/nxp3220-poky-linux-gnueabi/linux-4.14-nexell/4.14+git999-r0/defconfig # non-hardware

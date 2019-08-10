@@ -1,0 +1,22 @@
+config SND_NEXELL
+	tristate "Nexell SoC Audio"
+	depends on ARCH_NEXELL
+	help
+	  Say Y or M if you want to add support for codecs attached to
+	  the I2S and spdif and others interface.
+
+config SND_NEXELL_PCM
+	bool
+
+config SND_NEXELL_I2S
+	tristate "Nexell I2S"
+	depends on SND_NEXELL
+	select SND_NEXELL_PCM
+
+config SND_NEXELL_PDM
+	tristate "Nexell PDM"
+	depends on SND_NEXELL
+
+config SND_NEXELL_NULL_CODEC
+	tristate "Nexell Null Codec"
+	depends on SND_NEXELL

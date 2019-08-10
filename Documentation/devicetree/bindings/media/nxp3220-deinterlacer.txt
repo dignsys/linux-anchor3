@@ -1,0 +1,30 @@
+Nexell Deinterlacer Device Tree bindings
+=========================================
+
+Deinterlacer is Deinterlacing to process of converting interlaced video,
+such as common analog television signal.
+
+Required properties:
+- compatible		: must contain "nexell,nxp3220-deinterlacer"
+- reg			: the two register sets (physical address and length) for the DEINTERLACER
+- interrupts		: ths DEINTERLACER interrupt specifier
+- assigned-clocks	: Bus clock assigned
+- assigned-clock-rates  : Speed of the assigned bus clock
+- clock-names		: the DEINTERLACER clock specifier
+- clocks		: the clock reference for DEINTERLACER. must use value defined in clock dts
+- module		: the DEINTERLACER module number
+- status		: default is "disabled". when using, set to "okay"
+
+Example:
+	deinterlacer: deinterlacer@0x250c0000 {
+		compatible ="nexell,nxp3220-deinterlacer";
+		reg = <0x250C0000 0x1000>;
+		interrupts = <GIC_SPI 33 IRQ_TYPE_NONE>;
+		assigned-clocks = <&cmu_mm CLK_MM_DEINTERLACE_AXI>,
+			<&cmu_mm CLK_MM_DEINTERLACE_APB>;
+		assigned-clock-rates = <333333334>, <166666667>;
+		clock-names = "axi","apb";
+		clocks = <&cmu_mm CLK_MM_DEINTERLACE_AXI>,
+			<&cmu_mm CLK_MM_DEINTERLACE_APB>;
+		status = "disabled";
+	};

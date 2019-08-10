@@ -1,0 +1,49 @@
+Device-Tree bindings for Nexell's DRM and display control driver
+
+Required properties:
+- compatible: value should be "nexell,nxp3220-drm"
+- reg: Physical base address and length of the multi layer controller's
+       registers map and display sysnc controller's registers map.
+- reg-names: Should be "mlc.0" and "dpc.0".
+- interrupts: The interrupt signals from the display sync controller.
+- clocks: Must contain an entry for each entry in clock-names.
+- clock-names: Must include the following entries:
+ - axi : display bus clock name
+ - clk_x1 : display X1 sync clock for the operation of a pixel unit
+ - clk_x2 : display X2 sync clock for for pixel output.
+- plane-names: multi layer's type and order ("primary", "video")
+
+Optional Properties:
+- back-color: top layer's background color
+- color-key: video layer's color key value
+- video-priority: video layer's priority (0: video/primary, 1:primary/video)
+- color-key-disable: disable color-key at boot time
+- alphablend-disable: disable alpha blend at boot time
+- video-scale-hfilter-max: video layer's horizontal line filter enable max limit
+                           value, if source image width is greater than or equal
+			   this value, disable horizontal line filter.
+			   If set to 0, it is automatically set.
+- video-scale-vfilter-max: video layer's veritcal line filter enable max limit
+                           value, if source image height is greater than or equal
+			   this value, disable vertical line filter.
+			   If set to 0, it is automatically set.
+
+Example:
+
+drm: drm@25140000 {
+	compatible = "nexell,nxp3220-drm";
+	reg = <0x25140000 0x1000>, <0x25140800 0x1000>;
+	reg-names = "mlc.0", "dpc.0";
+	interrupts = <GIC_SPI 38 IRQ_TYPE_NONE>;
+	clocks = <&cmu_mm CLK_MM_DPC_AXI>,
+		       <&cmu_mm CLK_MM_DPC_X1>,
+		       <&cmu_mm CLK_MM_DPC_X2>;
+	clock-names = "axi", "clk_x1", "clk_x2";
+	plane-names = "primary", "video";
+	status = "disabled";
+};
+
+&drm {
+	status = "okay";
+};
+

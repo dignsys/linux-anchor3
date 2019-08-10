@@ -1,0 +1,116 @@
+Binding for Nexell PLL(2555, 2651) and  fixed-factor-clock controllers
+
+Required Properties:
+- compatible: should be one of the following.
+ - "nexell,pll2555"		: PLL2555
+ - "nexell,pll2651"		: PLL2651
+ - "nexell,fixed-factor-clock"  : fixed-factor-clock
+- reg: Base address and size of the PLL memory area
+- clocks: phandle of the external reference clock
+- #clock-cells: should be 1.
+
+Optional properties:
+- clock-output-names: can be "pll0", "pll1", "pll_cpu", "pll_ddr0", "pll_ddr1"
+		      and fixed-factor-clock "ext_clk", "pll1_div", "pll_cpu_div",
+		      "pll_ddr0_div", "pll_ddr1_div"
+PLL assigned:
+- pll0 : assigned for system bus and io devices,
+         system bus freq is pll0/3 and max freq is 333Mhz
+- pll1/pll1_div : assigned for audio master clock 12.288 Mhz
+		  (sample rate is 16/48/92 Khz)
+- pll_cpu/pll_cpu_div : assigned for cpu frequency scaling
+- pll_ddr0/pll_ddr0_div : assigned for DDR memory clock
+- pll_ddr1/pll_ddr1_div : assigned for audio master clock 16.9344 Mhz
+		  (sample rate is 44.1 Khz)
+
+Example:
+	pll_0: pll0 {
+		compatible = "nexell,pll2555", "syscon";
+		reg = <0x27020000 0x60>;
+		#clock-cells = <1>;
+		clocks = <&oscclk>;
+		clock-output-names = "pll0";
+		assigned-clocks = <&pll_0 0>;
+		assigned-clock-rates = <1000000000>;
+	};
+
+	pll_1: pll1 {
+		compatible = "nexell,pll2651", "syscon";
+		reg = <0x27030000 0x60>;
+		#clock-cells = <1>;
+		clocks = <&oscclk>;
+		clock-output-names = "pll1";
+	};
+
+	pll_1_div: pll1-div {
+		compatible = "nexell,fixed-factor-clock";
+		#clock-cells = <0>;
+		clock-div = <2>;
+		clock-mult = <1>;
+		clock-flags = <CLK_SET_RATE_PARENT>;
+		clocks = <&pll_1 0>;
+		clock-output-names = "pll1_div";
+
+		assigned-clocks = <&pll_1 0>;
+		assigned-clock-rates = <1228800000>;
+	};
+
+	pll_cpu: pll-cpu {
+		compatible = "nexell,pll2555", "syscon";
+		reg = <0x22070000 0x60>;
+		#clock-cells = <1>;
+		clocks = <&oscclk>;
+		clock-output-names = "pll_cpu";
+	};
+
+	pll_cpu_div: pll-cpu-div {
+		compatible = "nexell,fixed-factor-clock";
+		#clock-cells = <0>;
+		clock-div = <1>;
+		clock-mult = <1>;
+		clock-flags = <CLK_SET_RATE_PARENT>;
+		clocks = <&pll_cpu 0>;
+		clock-output-names = "pll_cpu_div";
+		assigned-clocks = <&pll_cpu 0>;
+		assigned-clock-rates = <800000000>;
+	};
+
+	pll_ddr0: pll-ddr0 {
+		compatible = "nexell,pl2555", "syscon";
+		reg = <0x23070000 0x60>;
+		#clock-cells = <1>;
+		clocks = <&oscclk>;
+		clock-output-names = "pll_ddr0";
+	};
+
+	pll_ddr0_div: pll-ddr0-div {
+		compatible = "nexell,fixed-factor-clock";
+		#clock-cells = <0>;
+		clock-div = <2>;
+		clock-mult = <1>;
+		clock-flags = <CLK_SET_RATE_PARENT>;
+		clocks = <&pll_ddr0 0>;
+		clock-output-names = "pll_ddr0_div";
+	};
+
+	pll_ddr1: pll-ddr1 {
+		compatible = "nexell,pll2651", "syscon";
+		reg = <0x23070000 0x60>;
+
+		#clock-cells = <1>;
+		clocks = <&oscclk>;
+		clock-output-names = "pll_ddr1";
+	};
+
+	pll_ddr1_div: pll-ddr1-div {
+		compatible = "nexell,fixed-factor-clock";
+		#clock-cells = <0>;
+		clock-div = <2>;
+		clock-mult = <1>;
+		clocks = <&pll_ddr1 0>;
+		clock-flags = <CLK_SET_RATE_PARENT>;
+		clock-output-names = "pll_ddr1_div";
+
+		assigned-clocks = <&pll_ddr1 0>;
+		assigned-clock-rates = <1354752000>;
+	};

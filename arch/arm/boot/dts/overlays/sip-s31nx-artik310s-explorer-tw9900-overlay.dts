@@ -1,0 +1,139 @@
+/* Enables VIP(Camera) interface for artik310s explorer board. */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/nxp3220-clk.h>
+#include <dt-bindings/pinctrl/nexell.h>
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/media/nxp3220-vip.h>
+
+/ {
+	compatible = "samsung,artik310s-explorer";
+
+	fragment@0 {
+		target = <&spi_1>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@1 {
+		target = <&i2c_2>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@2 {
+		target = <&i2c_3>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@3 {
+		target = <&i2c_4>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@4 {
+		target = <&uart1>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@5 {
+		target = <&i2c_1>;
+		__overlay__ {
+			status = "okay";
+			samsung,i2c-sda-delay = <100>;
+			samsung,i2c-max-bus-freq = <100000>;
+		};
+	};
+
+	fragment@6 {
+		target = <&soc>;
+		__overlay__ {
+			panel: panel {
+				compatible = "samsung,lms700kf23";
+				status = "okay";
+
+				port {
+					rgb_panel: endpoint {
+						remote-endpoint = <&rgb_out>;
+					};
+				};
+			};
+		};
+	};
+
+
+	fragment@7 {
+		target = <&drm_rgb>;
+		__overlay__ {
+			status = "okay";
+			pinctrl-0 = <>;
+
+			port {
+				rgb_out: endpoint {
+					remote-endpoint = <&rgb_panel>;
+				};
+			};
+
+			display-config {
+				out-format = <3>;
+			};
+		};
+	};
+
+	fragment@8 {
+		target = <&drm>;
+		__overlay__ {
+			status = "ok";
+		};
+	};
+
+	fragment@9 {
+		target = <&nx_v4l2>;
+		__overlay__ {
+			status = "ok";
+		};
+	};
+
+	fragment@10 {
+		target = <&vip>;
+		__overlay__ {
+			assigned-clocks = <&cmu_mm CLK_MM_VIP_AXI>,
+					  <&cmu_mm CLK_MM_VIP_APB>;
+			assigned-clock-rates = <333333334>,
+					       <166666667>;
+			status = "okay";
+		};
+	};
+
+	fragment@11 {
+		target = <&clipper>;
+
+		__overlay__ {
+			interface_type = <NX_CAPTURE_INTERFACE_PARALLEL>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&vid_data_clk &vid_sync>;
+			data_order = <NX_VIN_CBY0CRY1>;
+			port = <1>;
+			external_sync = <0>;
+			interlace = <1>;
+			status = "okay";
+
+			sensor {
+				type = <NX_CAPTURE_SENSOR_I2C>;
+				sensor_name = "tw9900";
+				i2c-bus = <&i2c_1>;
+				addr = <0x44>;
+			};
+		};
+	};
+};

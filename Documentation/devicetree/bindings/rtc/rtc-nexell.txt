@@ -1,0 +1,18 @@
+Nexell RTC(Real Time Clock) Device Tree bindings
+=================================================
+
+RTC controller for NEXELL SoCs
+
+Required properties:
+- compatible	: must contain "nexell,nx-rtc"
+- reg		: the register set (physical address and length) for the RTC
+- interrupts	: ths RTC interrupt specifier
+- status	: default is "disabled". when using, set to "okay"
+
+Example:
+	rtc:rtc@2008c000{
+		compatible="nexell,nx-rtc";
+		reg=<PHY_BASEADDR_RTC0_MODULE 0x1000>;
+		interrupts=<0IRQ_RTC0_MODULE0>;
+		status="disabled";
+	};

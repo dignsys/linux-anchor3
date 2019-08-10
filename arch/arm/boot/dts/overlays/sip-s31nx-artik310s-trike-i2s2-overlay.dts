@@ -1,0 +1,55 @@
+/* Enables I2S2 interface for artik310s FF board. */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "samsung,artik310s-trike";
+	fragment@0 {
+		target = <&sound0>;
+		__overlay__ {
+			status = "disabled";
+		};
+	};
+
+	fragment@1 {
+		target = <&i2s2>;
+		__overlay__ {
+			frame-bit = <32>;
+			sample-rate = <48000>;
+			status = "okay";
+		};
+	};
+
+	fragment@2 {
+		target-path = "/";
+		__overlay__ {
+			sound3: sound@3 {
+				compatible = "simple-audio-card";
+				simple-audio-card,name = "Artik310 Audio Card ALC5658";
+				simple-audio-card,widgets =
+					"Headphone", "Out Jack",
+					"Microphone", "In Jack";
+				simple-audio-card,routing =
+					"IN1P", "MICBIAS1",
+					"IN1P", "In Jack";
+				status = "okay";
+
+				simple-audio-card,dai-link@0 {
+					mclk-fs = <256>;
+					format = "i2s";
+					frame-master = <&sndcpu3>;
+					bitclock-master = <&sndcpu3>;
+
+					sndcpu3: cpu  {
+						sound-dai = <&i2s2 0>;
+					};
+
+					sndcodec3: codec {
+						sound-dai = <&alc5658 1>;
+					};
+				};
+			};
+		};
+	};
+};

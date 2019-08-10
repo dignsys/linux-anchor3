@@ -1,0 +1,14 @@
+#
+# Phy drivers for Nexell platforms
+#
+config PHY_NEXELL_USB2
+	tristate "Nexell USB2 PHY driver"
+	depends on ARCH_NEXELL
+	select GENERIC_PHY
+	help
+	  Enable this to support the Nexell USB 2.0 PHY driver for Nexell
+	  SoCs. This driver provides the interface for USB 2.0 PHY.
+
+config PHY_NXP3220_USB2
+        bool "Support for NXP3220"
+        depends on PHY_NEXELL_USB2

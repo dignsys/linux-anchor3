@@ -1,0 +1,42 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (C) 2019  DIGNSYS Inc.
+ * Author: Hyobok, Ahn <hbahn@dignsys.com>
+ */
+
+/dts-v1/;
+
+#include "nxp3220-anchor3-common.dtsi"
+
+/ {
+	compatible = "dignsys,nxp3220-anchor3", "nexell,nxp3220";
+
+	serial-number = "0001-anchor3";
+
+	leds {
+		compatible = "gpio-leds";
+
+		/* Act on Anchor3 SoM */
+		sdmmc {
+			label = "sdmmc";
+			gpios = <&gpio_b 17 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "mmc0";
+			default-state = "off";
+		};
+
+		/* User LED on Anchor3 Base */
+		heartbeat {
+			label = "Heartbeat";
+			gpios = <&gpio_d 16 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "heartbeat";
+			default-state = "off";
+		};
+
+	};
+};
+
+&cpu_thermal {
+	status = "disable";
+};
+
+

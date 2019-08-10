@@ -1,0 +1,670 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (C) 2018  Nexell Co., Ltd.
+ * Author: JungHyun, Kim <jhkim@nexell.co.kr>
+ */
+
+#include "sip-s31nx.dtsi"
+
+/ {
+	compatible = "samsung,artik310s", "nexell,nxp3220";
+
+	memory@40000000 {
+		device_type = "memory";
+		reg = <0x40000000 0x1f000000>;
+	};
+
+	thermal-zones {
+		cpu_thermal: cpu-thermal {
+			thermal-sensors = <&tmuctrl_0>;
+			polling-delay-passive = <1000>;
+			polling-delay = <1000>;
+			trips {
+				cpu_alert0: cpu-alert-0 {
+					temperature = <90000>;
+					hysteresis = <0>;
+					type = "passive";
+				};
+				cpu_alert1: cpu-alert-1 {
+					temperature = <100000>;
+					hysteresis = <0>;
+					type = "passive";
+				};
+				cpu_alert2: cpu-alert-2 {
+					temperature = <110000>;
+					hysteresis = <0>;
+					type = "passive";
+				};
+				cpu-crit-0 {
+					temperature = <115000>;
+					hysteresis = <0>;
+					type = "critical";
+				};
+			};
+
+			cooling-maps {
+				map0 {
+					trip = <&cpu_alert0>;
+					cooling-device = <&cpu0 5 5>;
+				};
+				map1 {
+					trip = <&cpu_alert1>;
+					cooling-device = <&cpu0 8 8>;
+				};
+				map2 {
+					trip = <&cpu_alert2>;
+					cooling-device = <&cpu0 9 9>;
+				};
+			};
+		};
+	};
+
+	artik_zb_power {
+		compatible = "samsung,artik_zb_power";
+		vdd_zb-supply = <&ldo20_reg>;     /* PVDD_LDO20_3P3 */
+		reset-gpio = <&gpio_c 16 0>;      /* AP_ZB_RSTn = GPC16 */
+		bootloader-gpio = <&gpio_b 19 0>; /* AP_ZIG_RBI = GPB19 */
+		status = "okay";
+	};
+
+	sd8x_rfkill: sd8x-rfkill {
+		 compatible = "mrvl,sd8x-rfkill";
+		 sd-host = <&dwmmc_1>;
+		 pd-gpio = <&alive_0 4 0>; /* AliveGPIO4=AP_COMBO_PDN output*/
+		 gpios = <&alive_0 3 1>; /* AliveGPIO3=COMBE_HOST_WAKE, input */
+		 vdd_bt_wlna_io_3p3-supply = <&ldo16_reg>;  /* PVDD_LDO16_3P3 */
+		 vdd_bt_wlna_2p2-supply = <&ldo17_reg>;     /* PVDD_LDO17_2P2 */
+		 vdd_bt_wlna_1p8-supply = <&ldo18_reg>;     /* PVDD_LDO18_1P8 */
+		 status = "okay";
+	};
+
+	sd8xxx-wlan {
+		 drvdbg  = <0x37>;
+		 drv_mode = <0x5>;
+		 cfg80211_wext = <0xf>;
+		 sta_name = "wlan";
+		 wfd_name = "p2p";
+		 max_vir_bss = <1>;
+		 cal_data_cfg = "mrvl/WlanCalData_ext.conf";
+		 fw_name = "mrvl/sdsd8977_combo_v2.bin";
+		 reg_alpha2 = "US";
+		 p2p_enh = <1>;
+		 inact_tmo = <300>;
+		 txpwrlimit_cfg = "mrvl/txpwrlimit_cfg.bin";
+	};
+
+	sd8xxx-bt {
+		 init_cfg = "mrvl/bt_init_cfg.conf";
+		 cal_cfg = "mrvl/bt_cal_data.conf";
+	};
+};
+
+&cpu0 {
+	cpu-supply = <&buck2_reg>;
+};
+
+&cpu0_opp_table {
+	opp-0 {
+		opp-hz = /bits/ 64 <100000000>;
+		opp-microvolt = <1000000>;
+	};
+	opp-1 {
+		opp-hz = /bits/ 64 <200000000>;
+		opp-microvolt = <1000000>;
+	};
+	opp-2 {
+		opp-hz = /bits/ 64 <300000000>;
+		opp-microvolt = <1000000>;
+	};
+	opp-3 {
+		opp-hz = /bits/ 64 <400000000>;
+		opp-microvolt = <1000000>;
+	};
+	opp-4 {
+		opp-hz = /bits/ 64 <500000000>;
+		opp-microvolt = <1000000>;
+	};
+	opp-5 {
+		opp-hz = /bits/ 64 <600000000>;
+		opp-microvolt = <1100000>;
+	};
+	opp-6 {
+		opp-hz = /bits/ 64 <700000000>;
+		opp-microvolt = <1100000>;
+	};
+	opp-7 {
+		opp-hz = /bits/ 64 <800000000>;
+		opp-microvolt = <1100000>;
+		opp-suspend;
+	};
+	opp-8 {
+		opp-hz = /bits/ 64 <900000000>;
+		opp-microvolt = <1200000>;
+	};
+	opp-9 {
+		opp-hz = /bits/ 64 <1000000000>;
+		opp-microvolt = <1200000>;
+	};
+};
+
+&dwmmc_0 {
+	clock-frequency = <333333334>;
+
+	cap-mmc-highspeed;
+	non-removable;
+	mmc-ddr-3_3v;
+	nexell,drive_shift = <0x03>;
+	nexell,sample_shift = <0x03>;
+	card-detect-delay = <200>;
+	disable-wp;
+	status = "okay";
+};
+
+&i2c_0 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	sm5011: sm5011-pmic@47 {
+		compatible = "sm,sm5011";
+		interrupt-parent = <&alive_0>;
+		interrupts = <1 IRQ_TYPE_NONE>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pmic_irq &rtc_out>;
+		reg = <0x47>;
+		enable-pwrstm;
+
+		voltage-regulators {
+			buck2_reg: BUCK2 {
+				regulator-name = "VDD_CPU_1P0";
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <1200000>;
+				regulator-always-on;
+				regulator-boot-on;
+				pwrstm-enter-slot = <3>;
+				pwrstm-exit-slot = <0>;
+
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
+			};
+
+			buck3_reg: BUCK3 {
+				regulator-name = "VDD_DDRIO_1P5";
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <1500000>;
+				regulator-always-on;
+				regulator-boot-on;
+
+				regulator-state-mem {
+					regulator-on-in-suspend;
+				};
+			};
+
+			buck4_reg: BUCK4 {
+				regulator-name = "VDD_DDR_1P0";
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <1000000>;
+				regulator-always-on;
+				regulator-boot-on;
+				pwrstm-enter-slot = <3>;
+				pwrstm-exit-slot = <0>;
+
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
+			};
+
+			buck5_reg: BUCK5 {
+				regulator-name = "VDD_CORE_1P0";
+				regulator-min-microvolt = <975000>;
+				regulator-max-microvolt = <1000000>;
+				regulator-always-on;
+				regulator-boot-on;
+				pwrstm-enter-slot = <3>;
+				pwrstm-exit-slot = <0>;
+
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
+			};
+
+			buck6_reg: BUCK6 {
+				regulator-name = "VDD_DDR_1P5";
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <1500000>;
+				regulator-always-on;
+				regulator-boot-on;
+
+				regulator-state-mem {
+					regulator-on-in-suspend;
+				};
+			};
+
+			ldo1_reg: LDO1 {
+				regulator-name = "VDD_PLL0_1P0";
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <1000000>;
+				regulator-always-on;
+				regulator-boot-on;
+				pwrstm-enter-slot = <3>;
+				pwrstm-exit-slot = <0>;
+
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
+			};
+
+			ldo2_reg: LDO2 {
+				regulator-name = "VDD_PLL0_1P8";
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-always-on;
+				regulator-boot-on;
+				pwrstm-enter-slot = <1>;
+				pwrstm-exit-slot = <2>;
+
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
+			};
+
+			ldo3_reg: LDO3 {
+				regulator-name = "VDD_EMMC_IO_3P3";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-always-on;
+				regulator-boot-on;
+
+				regulator-state-mem {
+					regulator-on-in-suspend;
+				};
+			};
+
+			ldo4_reg: LDO4 {
+				regulator-name = "VDD_ALIVE_3P3";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-always-on;
+				regulator-boot-on;
+
+				regulator-state-mem {
+					regulator-on-in-suspend;
+				};
+			};
+
+			ldo5_reg: LDO5 {
+				regulator-name = "VDD_ALIVE_1P8";
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-always-on;
+				regulator-boot-on;
+
+				regulator-state-mem {
+					regulator-on-in-suspend;
+				};
+			};
+
+			ldo6_reg: LDO6 {
+				regulator-name = "VDD_ALIVE_1P0";
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <1000000>;
+				regulator-always-on;
+				regulator-boot-on;
+
+				regulator-state-mem {
+					regulator-on-in-suspend;
+				};
+			};
+
+			ldo7_reg: LDO7 {
+				regulator-name = "VDD_EFUSE_1P5";
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <1500000>;
+			};
+
+			ldo9_reg: LDO9 {
+				regulator-name = "VDD_USB_1P0";
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <1000000>;
+				regulator-always-on;
+				regulator-boot-on;
+				pwrstm-enter-slot = <3>;
+				pwrstm-exit-slot = <0>;
+
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
+			};
+
+			ldo10_reg: LDO10 {
+				regulator-name = "VDD_USB_1P8";
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-always-on;
+				regulator-boot-on;
+				pwrstm-enter-slot = <1>;
+				pwrstm-exit-slot = <2>;
+
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
+			};
+
+			ldo11_reg: LDO11 {
+				regulator-name = "VDD_USB_3P3";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-always-on;
+				regulator-boot-on;
+				pwrstm-enter-slot = <0>;
+				pwrstm-exit-slot = <3>;
+
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
+			};
+
+			ldo12_reg: LDO12 {
+				regulator-name = "VDD_LDO12_1P8";
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-always-on;
+				regulator-boot-on;
+
+				regulator-state-mem {
+					regulator-on-in-suspend;
+				};
+			};
+
+			ldo13_reg: LDO13 {
+				regulator-name = "VDD_LDO13_3P3";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-always-on;
+				regulator-boot-on;
+
+				regulator-state-mem {
+					regulator-on-in-suspend;
+				};
+			};
+
+			ldo14_reg: LDO14 {
+				regulator-name = "VDD_MM_1P0_AP";
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <1000000>;
+				regulator-always-on;
+				regulator-boot-on;
+				pwrstm-enter-slot = <3>;
+				pwrstm-exit-slot = <0>;
+
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
+			};
+
+			ldo15_reg: LDO15 {
+				regulator-name = "VDD_DDRPLL_1P8_AP";
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-always-on;
+				regulator-boot-on;
+				pwrstm-enter-slot = <1>;
+				pwrstm-exit-slot = <2>;
+
+				regulator-state-mem {
+					regulator-off-in-suspend;
+				};
+			};
+
+			ldo16_reg: LDO16 {
+				regulator-name = "VDD_BT_WLAN_IO_3P3";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+			};
+
+			ldo17_reg: LDO17 {
+				regulator-name = "VDD_BT_WLAN_2P2";
+				regulator-min-microvolt = <2200000>;
+				regulator-max-microvolt = <2200000>;
+			};
+
+			ldo18_reg: LDO18 {
+				regulator-name = "VDD_BT_WLAN_1P8";
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+			};
+
+			ldo20_reg: LDO20 {
+				regulator-name = "VDD_ZB_3P3";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+			};
+		};
+	};
+};
+
+&pinctrl_0 {
+	key_pwr: key-pwr {
+		nexell,pins = "alive-0";
+		nexell,pin-function = <NX_PIN_FUNC0>;
+		nexell,pin-pull = <NX_PIN_PULL_UP>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	pmic_irq: sm5011-irq {
+		nexell,pins = "alive-1";
+		nexell,pin-function = <NX_PIN_FUNC0>;
+		nexell,pin-pull = <NX_PIN_PULL_NONE>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+
+	cfg_wlanhostwake: cfg-wlanhostwake {
+		nexell,pins = "alive-3";
+		nexell,pin-function = <NX_PIN_FUNC0>;
+		nexell,pin-pull = <NX_PIN_PULL_UP>;
+		nexell,pin-strength = <NX_PIN_STR0>;
+	};
+};
+
+&tmuctrl_0 {
+	status = "okay";
+};
+
+&uart6 {
+	status = "okay";
+	pinctrl-0 = <&uart6_bus &uart6_hflow>;
+};
+
+&dwmmc_1 {
+	status = "okay";
+	num-slots = <1>;
+	bus-width = <4>;
+	cap-sd-highspeed;
+
+	broken-cd;
+	clock-frequency = <200000000>;
+	supports-detect-complete;
+	no-prescan-powerup;
+	keep-power-in-suspend;
+	pm-ignore-notify;
+	powered-resumed-nonremovable-card;
+
+	nexell,drive_shift = <0x2>;
+	nexell,sample_shift = <0x2>;
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&mmc1_clk &mmc1_cmd &mmc1_bus4 &cfg_wlanhostwake>;
+};
+
+&peri0_pwr_pin {
+	PWR_PIN(PERI0, gpioa-0, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-1, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-2, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-3, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-4, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-5, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-6, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-7, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-8, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-9, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-10, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-11, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-12, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-13, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-14, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-15, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-16, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-17, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-18, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-19, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-20, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-21, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-22, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-23, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-24, NONE, LOW, UP);
+	PWR_PIN(PERI0, gpioa-25, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-26, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-27, INPUT, LOW, NONE);
+	PWR_PIN(PERI0, gpioa-28, INPUT, LOW, NONE);
+};
+
+&sdmmc_pwr_pin {
+	PWR_PIN(SDMMC, gpioa-29, INPUT, LOW, UP);
+	PWR_PIN(SDMMC, gpioa-30, INPUT, LOW, UP);
+	PWR_PIN(SDMMC, gpioa-31, INPUT, LOW, UP);
+	PWR_PIN(SDMMC, gpiob-0, INPUT, LOW, UP);
+	PWR_PIN(SDMMC, gpiob-1, INPUT, LOW, NONE);
+	PWR_PIN(SDMMC, gpiob-2, INPUT, LOW, UP);
+	PWR_PIN(SDMMC, gpiob-3, INPUT, LOW, NONE);
+	PWR_PIN(SDMMC, gpiob-4, INPUT, LOW, NONE);
+	PWR_PIN(SDMMC, gpiob-5, INPUT, LOW, NONE);
+	PWR_PIN(SDMMC, gpiob-6, INPUT, LOW, NONE);
+	PWR_PIN(SDMMC, gpiob-7, INPUT, LOW, NONE);
+	PWR_PIN(SDMMC, gpiob-8, INPUT, LOW, NONE);
+};
+
+/* This configuration will be applied after verification is done.
+&nand_pwr_pin {
+	PWR_PIN(NAND, gpiob-9, INPUT, LOW, UP);
+	PWR_PIN(NAND, gpiob-10, INPUT, LOW, UP);
+	PWR_PIN(NAND, gpiob-11, INPUT, LOW, UP);
+	PWR_PIN(NAND, gpiob-12, INPUT, LOW, UP);
+	PWR_PIN(NAND, gpiob-13, INPUT, LOW, UP);
+	PWR_PIN(NAND, gpiob-14, INPUT, LOW, UP);
+	PWR_PIN(NAND, gpiob-15, INPUT, LOW, UP);
+	PWR_PIN(NAND, gpiob-16, INPUT, LOW, UP);
+	PWR_PIN(NAND, gpiob-17, INPUT, LOW, NONE);
+	PWR_PIN(NAND, gpiob-18, INPUT, LOW, NONE);
+	PWR_PIN(NAND, gpiob-19, INPUT, LOW, DOWN);
+	PWR_PIN(NAND, gpiob-20, INPUT, LOW, UP);
+	PWR_PIN(NAND, gpiob-21, INPUT, LOW, UP);
+	PWR_PIN(NAND, gpiob-22, INPUT, LOW, DOWN);
+	PWR_PIN(NAND, gpiob-23, INPUT, LOW, NONE);
+	PWR_PIN(NAND, gpiob-24, INPUT, LOW, NONE);
+};
+*/
+
+&peri1_pwr_pin {
+	PWR_PIN(PERI1, gpiob-25, OUTPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpiob-26, OUTPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpiob-27, INPUT, LOW, UP);
+	PWR_PIN(PERI1, gpiob-28, INPUT, LOW, UP);
+	PWR_PIN(PERI1, gpiob-29, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpiob-30, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpiob-31, OUTPUT, HIGH, NONE);
+	PWR_PIN(PERI1, gpioc-0, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-1, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-2, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-3, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-4, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-5, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-6, OUTPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-7, OUTPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-8, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-9, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-10, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-11, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-12, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-13, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-14, INPUT, LOW, UP);
+	PWR_PIN(PERI1, gpioc-15, INPUT, LOW, NONE);
+	PWR_PIN(PERI1, gpioc-16, INPUT, LOW, UP);
+	PWR_PIN(PERI1, gpioc-17, INPUT, LOW, DOWN);
+};
+
+&gmac_pwr_pin {
+	PWR_PIN(GMAC, gpioc-18, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-19, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-20, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-21, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-22, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-23, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-24, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-25, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-26, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-27, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-28, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-29, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-30, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpioc-31, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpiod-0, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpiod-1, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpiod-2, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpiod-3, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpiod-4, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpiod-5, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpiod-6, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpiod-7, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpiod-8, INPUT, HIGH, NONE);
+	PWR_PIN(GMAC, gpiod-9, OUTPUT, HIGH, NONE);
+};
+
+&peri2_pwr_pin {
+	PWR_PIN(PERI2, gpiod-10, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-11, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-12, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-13, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-14, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-15, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-16, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-17, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-18, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-19, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-20, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-21, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-22, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-23, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-24, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-25, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-26, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-27, INPUT, LOW, UP);
+	PWR_PIN(PERI2, gpiod-28, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-29, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-30, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpiod-31, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpioe-0, INPUT, LOW, NONE);
+	PWR_PIN(PERI2, gpioe-1, INPUT, LOW, NONE);
+};
+
+&vip_pwr_pin {
+	PWR_PIN(VIP, gpioe-2, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-3, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-4, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-5, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-6, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-7, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-8, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-9, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-10, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-11, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-12, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-13, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-14, OUTPUT, HIGH, PREV);
+	PWR_PIN(VIP, gpioe-15, OUTPUT, HIGH, PREV);
+};
+
+&sys_bus {
+	status = "okay";
+	vdd-supply = <&buck5_reg>; /* "VDD_CORE_1P0" */
+};

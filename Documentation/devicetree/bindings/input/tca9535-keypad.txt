@@ -1,0 +1,47 @@
+* tca9535-keypad device tree bindings
+
+Required Chip Specific Properties:
+- compatible: "tca9535-key"
+- reg: the i2c address
+- interrupts: IRQ line number to the cpu
+- ports: pin number to which the key is connected (note the omitted number)
+- autorepeat: Enable auto repeat feature
+- use-polling: polling key status
+
+- label: descriptive name of the key
+- linux,input-type: Specify event type this button/key generates.
+  If not specified defaults to <1> == EV_KEY
+- linux,code: keycode to emit
+
+
+Example:
+
+&i2c_1 {
+	tca9535: tca9535@20 {
+		compatible = "tca9535-key";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x20>;
+		interrupt-parent = <&gpio_c>;
+		interrupts = <17 GPIO_ACTIVE_LOW>;
+		ports = <5 6 7>;
+
+		button@1 {
+			label = "key1";
+			linux,input-type = <EV_KEY>;
+			linux,code = <KEY_1>;
+		};
+
+		button@2 {
+			label = "key2";
+			linux,input-type = <EV_KEY>;
+			linux,code = <KEY_2>;
+		};
+
+		button@3 {
+			label = "key3";
+			linux,input-type = <EV_KEY>;
+			linux,code = <KEY_3>;
+		};
+	};
+};

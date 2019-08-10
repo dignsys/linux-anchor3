@@ -1,0 +1,70 @@
+Nexell nxp3220 NAND Flash Controller
+
+Required properties:
+- compatible : "nexell,nxp3220-nand".
+- reg : Offset and length of the register set for the controller device.
+- interrupts : shall define the nand controller interrupt.
+- clocks : shall reference nand controller clocks.
+- clock-names : nand controller internal clock names. Shall contain :
+    * "nand_apb" : nand APB clock
+    * "nand_core" : nand controller clock
+- nand-ecc-mode : must "hw_syndrome".
+- nand-timing-mode : refer to the nand datasheet and select the appropriate
+		     timing mode value corresponding to onfi mode (0 ~ 5).
+		     Obtain the value of the onfi field corresponding to the
+		     timing mode (nanosecond) and convert it to the appropriate
+		     value for nexell nfc controller.
+- wp-gpio : GPIO specifier for the write protect pin.
+
+ <Onfi Timing Mode>
+
+  mode	tCLS	tWP	tCLH	tCH	tALS	tWC	tWH	tRHW	tWHR
+ -------------------------------------------------------------------------------
+  0	50	50	20	20	50	100	30	200	120
+  1	25	25	10	10	25	45	15	100	80
+  2	15	17	10	10	15	35	15	100	80
+  3	10	15	5	5	10	30	10	100	80
+  4	10	12	5	5	10	25	10	100	80
+  5	10	10	5	5	10	20	7	100	80
+
+	#define ns2cycle_r(ns, clk)	\
+		(int)(((ns) * (clk / 1000000) + 999) / 1000)
+
+	cmd_setup = ns2cycle_r((tCLS - tWP) / nand_core_hz)
+	cmd_width = ns2cycle_r(tWP, nand_core_hz);
+	cmd_hold = ns2cycle_r(tCLH, nand_core_hz);
+	rhw = ns2cycle_r(tRHW, nand_core_hz);
+
+	data_setup = ns2cycle_r(tALS - tWP, nand_core_hz);
+	data_width = ns2cycle_r(tWC, nand_core_hz);
+	data_hold = ns2cycle_r((tWC - tWP), nand_core_hz);
+	whr = ns2cycle_r(tWHR, nand_core_hz);
+
+see Documentation/devicetree/bindings/mtd/nand.txt for generic bindings.
+
+
+Examples:
+nand: nand-controller@26180000 {
+	compatible = "nexell,nxp3220-nand";
+	reg = <0x26180000 0x1000>;
+	clocks = <&cmu CLK_NANDC0_APB>,
+		 <&cmu CLK_NANDC0_AXI>;
+	clock-names = "nand_apb", "nand_core";
+	interrupts = <GIC_SPI 66 IRQ_TYPE_NONE>;
+	assigned-clocks = <&cmu CLK_SRC_NANDC0_AXI>,
+			  <&cmu CLK_NANDC0_AXI>,
+			  <&cmu CLK_NANDC0_APB>;
+	assigned-clock-parents = <&pll_0 0>, <0>, <0>;
+	assigned-clock-rates = <250000000>, <250000000>, <125000000>;
+	wp-gpio = <&gpio_c 16 GPIO_ACTIVE_LOW>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&nand_pins>;
+	nand-bus-width = <8>;
+	nand-on-flash-bbt;
+
+	nand-ecc-mode = "hw_syndrome";
+	nand-ecc-strength = <4>;
+	nand-ecc-step-size = <512>;
+
+	nand-timing-mode = <3>;
+};

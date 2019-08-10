@@ -1,0 +1,14 @@
+config COMMON_CLK_NEXELL
+	bool
+	---help---
+	  Nexell SoC clock support
+
+config COMMON_CLK_NXP3220
+	bool "Clock driver for Nexell NXP3220"
+	depends on ARCH_NEXELL || COMPILE_TEST
+	select COMMON_CLK_NEXELL
+	select RESET_CONTROLLER
+	default ARCH_NXP3220_COMMON
+	---help---
+	  Support for the clock controller on Nexell NXP3220 and Samsung
+	  SIP-S31NX SoC.
