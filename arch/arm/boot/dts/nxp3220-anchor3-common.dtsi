@@ -621,10 +621,10 @@
 };
 
 &pwm {
-	nexell,pwm-outputs = <3>;
+	nexell,pwm-outputs = <0>, <1>, <2>, <3>;
 	tclk_freq = <100000000>;
 	pinctrl-names = "default";
-	pinctrl-0 = <&pwm3_pin>;
+	pinctrl-0 = <&pwm0_pin &pwm1_pin &pwm2_pin &pwm3_pin>;
 	status = "okay";
 };
 
