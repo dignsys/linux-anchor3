@@ -9,8 +9,8 @@
 #include "nxp3220-anchor3-common.dtsi"
 
 / {
-	compatible = "dignsys,nxp3220-anchor3", "nexell,nxp3220";
-
+        model = "Anchor3 Board";
+	compatible = "dignsys,anchor3", "nexell,nxp3220";
 	serial-number = "0001-anchor3";
 
 	leds {
