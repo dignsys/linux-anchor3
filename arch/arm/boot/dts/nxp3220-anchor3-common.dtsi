@@ -259,10 +259,31 @@
         };
 };
 
+&uart0 {
+	status = "okay";
+};
+
+&uart1 {
+	status = "okay";
+};
+
+&uart2 {
+	status = "okay";
+};
+
 &uart4 {
 	pinctrl-0 = <&uart4_bus>, <&uart4_hflow>;
 	pinctrl-names = "default";
 
+	status = "okay";
+};
+
+&uart5 {
+	pinctrl-0 = <&uart5_bus>, <&uart5_485>;
+	status = "okay";
+};
+
+&uart6 {
 	status = "okay";
 };
 
@@ -598,20 +619,6 @@
 		nexell,pin-strength = <NX_PIN_STR0>;
 	};
 
-	spi0_wp: spi0-wp {
-		nexell,pins = "gpioc-1";
-		nexell,pin-function = <NX_PIN_FUNC0>;
-		nexell,pin-pull = <NX_PIN_PULL_UP>;
-		nexell,pin-strength = <NX_PIN_STR0>;
-	};
-
-	spi0_hold: spi0-hold {
-		nexell,pins = "gpioc-2";
-		nexell,pin-function = <NX_PIN_FUNC0>;
-		nexell,pin-pull = <NX_PIN_PULL_UP>;
-		nexell,pin-strength = <NX_PIN_STR0>;
-	};
-
 	bt_reg_on: bt_reg_on {
 		nexell,pins = "gpiob-23";
 		nexell,pin-function = <NX_PIN_FUNC0>;
@@ -629,10 +636,6 @@
 };
 
 &tmuctrl_0 {
-	status = "okay";
-};
-
-&uart2 {
 	status = "okay";
 };
 
@@ -654,23 +657,17 @@
 
 &spi_0 {
 	status = "okay";
-	pinctrl-0 = <&spi0_bus>, <&spi0_wp>, <&spi0_hold>;
+	pinctrl-0 = <&spi0_bus>;
 	cs-gpios = <&gpio_c 4 0>;
-
-	flash: m25p80 {
-		#address-cells = <1>;
-		#size-cells = <1>;
-		compatible = "m25p80", "jedec,spi-nor";
+	spidev@0 {
+		compatible = "linux,spidev";
+		pl022,com-mode = <0x2>;
+		pl022,rx-level-trig = <1>;
+		pl022,tx-level-trig = <1>;
 		reg = <0>;
-		spi-max-frequency = <1000000>;
-		disable-4byte-address;
-		m25p,fast-read;
-		spi-cpol;
-		spi-cpha;
-
-		partition@0 {
-			label = "part0";
-			reg = <0x500000 0x7b00000>;
+		spi-max-frequency = <10000000>;
+		controller-data {
+			samsung,spi-feedback-delay = <0>;
 		};
 	};
 };
